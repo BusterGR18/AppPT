@@ -35,12 +35,17 @@ import Signup from './Signup.js'
 import Respass from './passfor.js'
 import AcercaDe from './acercade.js'
 import ModFis from './modfis.js'
+import Contactos from './pages/contactos.js'
+import Rutas from './pages/rutas.js'
+import Estadisticas from './pages/estadisticas.js'
+import Configuracion from './pages/configuracion.js'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/esm/Button.js'
+import Dashboard from './Dash.js'
 //import { Link } from 'react-router-dom/cjs/react-router-dom.min'
 
 
@@ -87,7 +92,12 @@ const App = () => {
         <Route path="/" exact component={Inicio} />      
         <Route path="/rescont" exact component={Respass} />
         <Route path="/acercade" exact component={AcercaDe} /> 
-        <Route path="/modfis" exact component={ModFis} />      
+        <Route path="/modfis" exact component={ModFis} />  
+        <Route path="/dash" exact component={Dashboard} />      
+        <Route path="/contactos" exact component={Contactos} />      
+        <Route path="/rutas" exact component={Rutas} />      
+        <Route path="/estadisticas" exact component={Estadisticas}/>
+        <Route path="/configuracion" exact component={Configuracion}/>
     </BrowserRouter>
   </div>
 }
