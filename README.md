@@ -1,4 +1,2 @@
 # AppPT
-# AppPT
-# AppPT
-# AppPT
+El siguiente repositorio cuenta con el codigo pertinente a los modulos de back end y front end del sistema, asi como el algoritmo de deteccion de accidentes y las configuraciones on device necesarias, asi como algo de documentacion 

@@ -111,7 +111,7 @@ function App() {
 export default App
 */
 import React, { useState } from 'react';
-import { Form, InputGroup, Button, Container, Row, Col, Nav } from 'react-bootstrap';
+import { Form,  Button, Container, Row, Col, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 function Signup() {

@@ -29,55 +29,35 @@ export default App;
 
 import React from 'react'
 import {BrowserRouter, Route} from 'react-router-dom'
-import Inicio from './Home.js'
-import Login from './Login.js'
-import Signup from './Signup.js'
-import Respass from './passfor.js'
-import AcercaDe from './acercade.js'
-import ModFis from './modfis.js'
-import Contactos from './pages/contactos.js'
-import Rutas from './pages/rutas.js'
-import Estadisticas from './pages/estadisticas.js'
-import Configuracion from './pages/configuracion.js'
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import Inicio from './paginas/start/Home.js'
+import Login from './paginas/paginasusuario/Login.js'
+import Signup from './paginas/paginasusuario/Signup.js'
+import Respass from './paginas/paginasusuario/passfor.js'
+import AcercaDe from './paginas/start/acercade.js'
+import ModFis from './paginas/start/modfis.js'
+import Contactos from './paginas/tablero/contactos.js'
+import Rutas from './paginas/tablero/rutas.js'
+import Estadisticas from './paginas/tablero/estadisticas.js'
+import Configuracion from './paginas/tablero/configuracion.js'
+import Dashboard from './paginas/tablero/Dash.js'
+import HistorialAE from './paginas/tablero/historialae.js'
+import { Container, Nav,  Navbar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Button from 'react-bootstrap/esm/Button.js'
-import Dashboard from './Dash.js'
-//import { Link } from 'react-router-dom/cjs/react-router-dom.min'
 
 
 const NavbarPrincipal = () => (
-  <Container>
-    <Navbar expand="xl" className="bg-body-tertiary">
-      <Container>
-        <Navbar.Brand href="#home">SiNoMoto</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="/inicio">Inicio</Nav.Link>
-            <Nav.Link href="#link">Link</Nav.Link>
-            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
-              </NavDropdown.Item>
-            </NavDropdown>
-          </Nav>                
-        </Navbar.Collapse>
-        <Button  variant="outline-primary">
-          Iniciar Sesion
-        </Button>
-      </Container>
-    </Navbar>  
-    </Container>
+  <Navbar bg="light" expand="lg" fixed="top">
+        <Container>
+          <Navbar.Brand href="/">SiNoMoto</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ml-auto">
+              <Nav.Link href="/inicio">Inicio</Nav.Link>
+              <Nav.Link href="/inicio">Si ves esto es por que falta un navbar</Nav.Link>              
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
   
 );
 
@@ -98,6 +78,7 @@ const App = () => {
         <Route path="/rutas" exact component={Rutas} />      
         <Route path="/estadisticas" exact component={Estadisticas}/>
         <Route path="/configuracion" exact component={Configuracion}/>
+        <Route path="/historial" exact component={HistorialAE}/>
     </BrowserRouter>
   </div>
 }

@@ -34,6 +34,9 @@ const Dashboard = () => {
   const defaultPosition = [51.505, -0.09];
 
   return (
+    <div>
+
+    
     <Container className="mt-5">
       <Navbar bg="light" expand="lg" fixed="top">
         <Container>
@@ -61,13 +64,13 @@ const Dashboard = () => {
                   <Col md={3}>
                     <WelcomeCard
                       title="Modulos registrados"
-                      description="Visualiza las ventas mensuales y realiza un seguimiento de los ingresos."
+                      description="Listado de los modulos vinculados al usuario"
                     />
                   </Col>
                   <Col md={4}>
                     <WelcomeCard
                       title="Datos Generales"
-                      description="Descubre quiénes son los principales vendedores este mes."
+                      description="Datos del sistema: Status, Numero de contactos registrados, Historial de accidentes"
                     />
                   </Col>
                   <Col md={5}>
@@ -84,6 +87,14 @@ const Dashboard = () => {
         </Row>
       </Tab.Container>
     </Container>
+
+
+    <footer className="fixed-bottom text-center py-2 bg-light">
+      <Button variant="outline-secondary" >
+        Cerrar Sesión
+      </Button>
+    </footer>
+    </div>
   );
 };
 
