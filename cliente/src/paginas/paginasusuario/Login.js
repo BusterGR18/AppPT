@@ -105,7 +105,7 @@ function App() {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:1337/api/login', {
+      const response = await fetch('http://localhost:3900/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
