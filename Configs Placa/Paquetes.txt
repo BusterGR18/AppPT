@@ -1,0 +1,2 @@
+##TO-DO
+##Recopilar y declarar en esta seccion los paquetes que requiere la placa para ejecutar los scripts

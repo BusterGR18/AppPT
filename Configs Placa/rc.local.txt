@@ -1,0 +1,16 @@
+### Copia de seguridad de la configuración de arranque presente en la SBC
+### Aquí se implementará la ejecución de los scripts relacionados a sensores,
+### Geolocalización y alimentación electrica.
+
+# Put your custom commands here that should be executed once
+# the system init finished. By default this file does nothing.
+
+/bin/ad_block &
+
+### activate the swap file on an external USB drive
+SWAP_FILE="/root/swap.page"
+if [ -e "$SWAP_FILE" ]; then
+        swapon $SWAP_FILE
+fi
+
+exit 0
