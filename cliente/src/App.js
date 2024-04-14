@@ -37,6 +37,8 @@ import AcercaDe from './paginas/start/acercade.js'
 import ModFis from './paginas/start/modfis.js'
 import Contactos from './paginas/tablero/contactos.js'
 import Rutas from './paginas/tablero/rutas.js'
+import ViewRutas from './paginas/tablero/Polys/view-rutas.js'
+import DeleteRutas from './paginas/tablero/Polys/delete-rutas.js'
 import Estadisticas from './paginas/tablero/estadisticas.js'
 import Configuracion from './paginas/tablero/configuracion.js'
 import Dashboard from './paginas/tablero/Dash.js'
@@ -75,7 +77,9 @@ const App = () => {
         <Route path="/modfis" exact component={ModFis} />  
         <Route path="/dash" exact component={Dashboard} />      
         <Route path="/contactos" exact component={Contactos} />      
-        <Route path="/rutas" exact component={Rutas} />      
+        <Route path="/rutas" exact component={Rutas} />     
+        <Route path="/viewrutas" exact component={ViewRutas} /> 
+        <Route path="/deleterutas" exact component={DeleteRutas} /> 
         <Route path="/estadisticas" exact component={Estadisticas}/>
         <Route path="/configuracion" exact component={Configuracion}/>
         <Route path="/historial" exact component={HistorialAE}/>

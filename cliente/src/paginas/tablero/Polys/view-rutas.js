@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Nav, Navbar, Button, NavDropdown } from 'react-bootstrap';
+import { Container, Nav, Navbar, Button, NavDropdown, Form } from 'react-bootstrap';
 import { MapContainer, TileLayer, Polygon, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet-draw';
@@ -7,20 +7,25 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import * as turf from '@turf/turf';
 
-const Rutas = () => {
+const ViewRutas = () => {
   const [geojsonData, setGeojsonData] = useState(null);
+  const [selectedPolygon, setSelectedPolygon] = useState({ type: "Polygon", coordinates: [] });
 
   const handleCreated = (e) => {
     const layer = e.layer;
     const geojson = layer.toGeoJSON();
     setGeojsonData(geojson);
-    //Salida del poligono a consola
     console.log('Generated GeoJSON:', geojson);
-    //Establecimiento de un buffer de cinco metros al poligono
     const bufferedGeojson = turf.buffer(geojson, 5, { units: 'meters' });
-
-    // Salida del poligono con buffer a la consola
     console.log('Buffered GeoJSON:', bufferedGeojson);
+  };
+
+  const handlePolygonSelect = (polygonValue) => {
+    if (polygonValue) {
+      setSelectedPolygon(JSON.parse(polygonValue));
+    } else {
+      setSelectedPolygon(null);
+    }
   };
 
   return (
@@ -45,35 +50,43 @@ const Rutas = () => {
         </Container>
       </Navbar>
 
-      <br>
-      </br>
-
+      
+      <Container fluid>
       <br></br>
-      <div id="leafletmap">
+      <br></br>
+      </Container>
+      
+      <Container fluid>
         <MapContainer center={[0, 0]} zoom={2} style={{ height: '500px', width: '100%' }}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
 
+          {/* Renderizar polígonos previamente creados */}
+          {selectedPolygon && <Polygon positions={selectedPolygon.coordinates} />}
+          {/* Renderizar polígono en tiempo real */}
           {geojsonData && <Polygon positions={geojsonData.geometry.coordinates} />}
 
           <DrawControl onCreated={handleCreated} />
         </MapContainer>
-      </div>
+      </Container>
+
+      <Container fluid>
+        <Form.Select onChange={(e) => handlePolygonSelect(e.target.value)}>
+          <option value="">Seleccionar Polígono</option>
+          {/* Aquí deberías mapear sobre una lista de polígonos previamente creados */}
+          {/* Por ahora, solo estoy proporcionando un ejemplo con un polígono */}
+          <option value={JSON.stringify({ "type": "Polygon", "coordinates": [[[0,0],[0,10],[10,10],[10,0],[0,0]]] })}>Polígono 1</option>
+        </Form.Select>
+      </Container>
 
       <footer className="fixed-bottom text-center py-2 bg-light">
-        <Button variant="outline-secondary" >
-          Cerrar Sesión
-        </Button>
+        <Button variant="outline-secondary">Cerrar Sesión</Button>
       </footer>
-      
     </div>
   );
 };
-
-//Logica relacionada al mapa
-//Se incluye la creacion del mapa y sus herramientas de dibujo
 
 const DrawControl = ({ onCreated }) => {
   const map = useMap();
@@ -93,15 +106,13 @@ const DrawControl = ({ onCreated }) => {
         },
       },
       edit: {
-        featureGroup: new L.FeatureGroup(), // Requerido para la herramienta de dibujo
+        featureGroup: new L.FeatureGroup(),
       },
     });
 
-    map.addControl(drawControl);
+    // map.addControl(drawControl);
     map.on('draw:created', onCreated);
-
-    // Se pide la ubicacion del usuario
-    map.locate({ setView: true, maxZoom: 16 });
+    map.locate({ setView: true, maxZoom: 14 });
 
     return () => {
       map.off('draw:created', onCreated);
@@ -112,4 +123,4 @@ const DrawControl = ({ onCreated }) => {
   return null;
 };
 
-export default Rutas;
+export default ViewRutas;

@@ -7,7 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import * as turf from '@turf/turf';
 
-const Rutas = () => {
+const Delete_Rutas = () => {
   const [geojsonData, setGeojsonData] = useState(null);
 
   const handleCreated = (e) => {
@@ -34,9 +34,9 @@ const Rutas = () => {
               <Nav.Link href='/dash'>Inicio</Nav.Link>
               <Nav.Link href='/contactos'>Contactos</Nav.Link>
               <NavDropdown title="Rutas" id="basic-nav-dropdown">
-                <NavDropdown.Item href="/register-route">Registrar Nueva Ruta</NavDropdown.Item>
-                <NavDropdown.Item href="/viewrutas">Visualizar Rutas Existentes</NavDropdown.Item>
-                <NavDropdown.Item href="/deleterutas">Eliminar Rutas</NavDropdown.Item>
+                <NavDropdown.Item href="#register-route">Registrar Nueva Ruta</NavDropdown.Item>
+                <NavDropdown.Item href="#view-routes">Visualizar Rutas Existentes</NavDropdown.Item>
+                <NavDropdown.Item href="#delete-routes">Eliminar Rutas</NavDropdown.Item>
               </NavDropdown>
               <Nav.Link href='/estadisticas'>Estadisticas</Nav.Link>
               <Nav.Link href='/configuracion'>Configuración</Nav.Link>          
@@ -112,4 +112,4 @@ const DrawControl = ({ onCreated }) => {
   return null;
 };
 
-export default Rutas;
+export default Delete_Rutas;
