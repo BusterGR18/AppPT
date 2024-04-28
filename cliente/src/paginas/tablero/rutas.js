@@ -8,6 +8,22 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 import * as turf from '@turf/turf';
 
 const Rutas = () => {
+  const handleLogout = () => {
+    // Matar token JWT del almacenamiento
+    localStorage.removeItem('token');
+    // Redireccion al login    
+    window.location.href = '/login';
+  };
+  useEffect(() => {    
+    // Check if user is authenticated (e.g., by verifying JWT token)
+    const isAuthenticated = localStorage.getItem('token') !== null;
+    
+    // If user is not authenticated, redirect to login page
+    if (!isAuthenticated) {
+        // Redirect to login page
+        window.location.href = '/login';
+    }
+  }, []);
   const [geojsonData, setGeojsonData] = useState(null);
 
   const handleCreated = (e) => {
@@ -63,9 +79,9 @@ const Rutas = () => {
       </div>
 
       <footer className="fixed-bottom text-center py-2 bg-light">
-        <Button variant="outline-secondary" >
-          Cerrar Sesión
-        </Button>
+      <Button variant="outline-secondary" onClick={handleLogout}>
+        Cerrar Sesión
+      </Button>
       </footer>
       
     </div>

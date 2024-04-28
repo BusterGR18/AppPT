@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Row, Col, Nav, Tab, Card, Button, Navbar } from 'react-bootstrap';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -31,7 +31,23 @@ const MapCard = ({ center, zoom, popupContent }) => (
 );
 
 const Dashboard = () => {
+  const handleLogout = () => {
+    // Matar token JWT del almacenamiento
+    localStorage.removeItem('token');
+    // Redireccion al login    
+    window.location.href = '/login';
+  };
   const defaultPosition = [51.505, -0.09];
+  useEffect(() => {    
+    // Check if user is authenticated (e.g., by verifying JWT token)
+    const isAuthenticated = localStorage.getItem('token') !== null;
+    
+    // If user is not authenticated, redirect to login page
+    if (!isAuthenticated) {
+        // Redirect to login page
+        window.location.href = '/login';
+    }
+  }, []);
 
   return (
     <div>
@@ -90,7 +106,7 @@ const Dashboard = () => {
 
 
     <footer className="fixed-bottom text-center py-2 bg-light">
-      <Button variant="outline-secondary" >
+      <Button variant="outline-secondary" onClick={handleLogout}>
         Cerrar Sesión
       </Button>
     </footer>

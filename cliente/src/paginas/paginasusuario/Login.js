@@ -105,7 +105,40 @@ function App() {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3900/api/login', {
+        const response = await fetch('http://localhost:4000/api/v1/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email,
+                password,
+            }),
+        });
+
+        const data = await response.json();
+
+        console.log('Login response:', data); // Log response data
+
+        if (response.ok) {
+            localStorage.setItem('token', data.token);
+            console.log('Token:', data.token); // Log token
+            alert('Login successful');
+            window.location.href = '/dash';
+        } else {
+            alert('Please check your username and password');
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        alert('Error during login. Please try again.');
+    }
+};
+
+  /*const loginUser = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch('http://localhost:4000/api/v1/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,6 +154,7 @@ function App() {
       if (data.user) {
         localStorage.setItem('token', data.user);
         alert('Login successful');
+        console.log('exito')
         window.location.href = '/dashboard';
       } else {
         alert('Please check your username and password');
@@ -128,7 +162,7 @@ function App() {
     } catch (error) {
       console.error('Error during login:', error);
     }
-  };
+  };*/
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);

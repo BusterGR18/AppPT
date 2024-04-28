@@ -29,10 +29,26 @@ const Configuracion= () => {
 };
 export default Configuracion;
 */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Nav, Navbar, Tab, Row, Col, Button } from 'react-bootstrap';
 
 const Configuracion = () => {
+  const handleLogout = () => {
+    // Matar token JWT del almacenamiento
+    localStorage.removeItem('token');
+    // Redireccion al login    
+    window.location.href = '/login';
+  };
+  useEffect(() => {    
+    // Check if user is authenticated (e.g., by verifying JWT token)
+    const isAuthenticated = localStorage.getItem('token') !== null;
+    
+    // If user is not authenticated, redirect to login page
+    if (!isAuthenticated) {
+        // Redirect to login page
+        window.location.href = '/login';
+    }
+  }, []);
   return (
     <div>
       <Navbar bg="light" expand="lg" fixed="top">
@@ -95,7 +111,9 @@ const Configuracion = () => {
       </Container>
 
       <footer className="fixed-bottom text-center py-2 bg-light">
-        <Button variant="outline-secondary">Cerrar Sesión</Button>
+      <Button variant="outline-secondary" onClick={handleLogout}>
+        Cerrar Sesión
+      </Button>
       </footer>
     </div>
   );
