@@ -9,7 +9,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import * as turf from '@turf/turf';
 
-const Rutas = () => {
+const RegisterRuta = () => {
   const [userEmail, setUserEmail] = useState(null);
   const handleLogout = () => {
     // Matar token JWT del almacenamiento
@@ -70,7 +70,7 @@ const Rutas = () => {
               <Nav.Link href='/dash'>Inicio</Nav.Link>
               <Nav.Link href='/contactos'>Contactos</Nav.Link>
               <NavDropdown title="Rutas" id="basic-nav-dropdown">
-                <NavDropdown.Item href="/register-route">Registrar Nueva Ruta</NavDropdown.Item>
+                <NavDropdown.Item href="/registerruta">Registrar Nueva Ruta</NavDropdown.Item>
                 <NavDropdown.Item href="/viewrutas">Visualizar Rutas Existentes</NavDropdown.Item>
                 <NavDropdown.Item href="/deleterutas">Eliminar Rutas</NavDropdown.Item>
               </NavDropdown>
@@ -148,4 +148,4 @@ const DrawControl = ({ onCreated }) => {
   return null;
 };
 
-export default Rutas;
+export default RegisterRuta;

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Container, Row, Col, Nav, Tab, Card, Button, Navbar } from 'react-bootstrap';
+import { Container, Row, Col, Nav, Tab, Card,NavDropdown, Button, Navbar } from 'react-bootstrap';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -54,7 +54,7 @@ const Dashboard = () => {
 
     
     <Container className="mt-5">
-      <Navbar bg="light" expand="lg" fixed="top">
+    <Navbar bg="light" expand="lg" fixed="top">
         <Container>
           <Navbar.Brand href="/">SiNoMoto</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -62,9 +62,13 @@ const Dashboard = () => {
             <Nav className="ml-auto">
               <Nav.Link href='/dash'>Inicio</Nav.Link>
               <Nav.Link href='/contactos'>Contactos</Nav.Link>
-              <Nav.Link href='/rutas'>Rutas</Nav.Link>
+              <NavDropdown title="Rutas" id="basic-nav-dropdown">
+                <NavDropdown.Item href="/registerruta">Registrar Nueva Ruta</NavDropdown.Item>
+                <NavDropdown.Item href="/viewrutas">Visualizar Rutas Existentes</NavDropdown.Item>
+                <NavDropdown.Item href="/deleterutas">Eliminar Rutas</NavDropdown.Item>
+              </NavDropdown>
               <Nav.Link href='/estadisticas'>Estadisticas</Nav.Link>
-              <Nav.Link href='/configuracion'>Configuración</Nav.Link>
+              <Nav.Link href='/configuracion'>Configuración</Nav.Link>          
             </Nav>
           </Navbar.Collapse>
         </Container>

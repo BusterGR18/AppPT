@@ -39,7 +39,7 @@ const ViewRutas = () => {
               <Nav.Link href='/dash'>Inicio</Nav.Link>
               <Nav.Link href='/contactos'>Contactos</Nav.Link>
               <NavDropdown title="Rutas" id="basic-nav-dropdown">
-                <NavDropdown.Item href="/register-route">Registrar Nueva Ruta</NavDropdown.Item>
+                <NavDropdown.Item href="/registerruta">Registrar Nueva Ruta</NavDropdown.Item>
                 <NavDropdown.Item href="/viewrutas">Visualizar Rutas Existentes</NavDropdown.Item>
                 <NavDropdown.Item href="/deleterutas">Eliminar Rutas</NavDropdown.Item>
               </NavDropdown>

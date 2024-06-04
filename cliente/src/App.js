@@ -45,6 +45,7 @@ import Dashboard from './paginas/tablero/Dash.js'
 import HistorialAE from './paginas/tablero/historialae.js'
 import { Container, Nav,  Navbar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import RegisterRuta from './paginas/tablero/Polys/registerroute.js'
 
 
 const NavbarPrincipal = () => (
@@ -80,6 +81,7 @@ const App = () => {
         <Route path="/rutas" exact component={Rutas} />     
         <Route path="/viewrutas" exact component={ViewRutas} /> 
         <Route path="/deleterutas" exact component={DeleteRutas} /> 
+        <Route path="/registerruta" exact component={RegisterRuta} />
         <Route path="/estadisticas" exact component={Estadisticas}/>
         <Route path="/configuracion" exact component={Configuracion}/>
         <Route path="/historial" exact component={HistorialAE}/>

@@ -348,7 +348,7 @@ const Contactos = () => {
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
-import { Container, Nav, Navbar, Table, Form, Button } from 'react-bootstrap';
+import { Container, Nav, Navbar, Table, Form, Button,NavDropdown } from 'react-bootstrap';
 
 const Contactos = () => {
   const [contactName, setContactName] = useState('');
@@ -437,9 +437,13 @@ const Contactos = () => {
             <Nav className="ml-auto">
               <Nav.Link href='/dash'>Inicio</Nav.Link>
               <Nav.Link href='/contactos'>Contactos</Nav.Link>
-              <Nav.Link href='/rutas'>Rutas</Nav.Link>
+              <NavDropdown title="Rutas" id="basic-nav-dropdown">
+                <NavDropdown.Item href="/registerruta">Registrar Nueva Ruta</NavDropdown.Item>
+                <NavDropdown.Item href="/viewrutas">Visualizar Rutas Existentes</NavDropdown.Item>
+                <NavDropdown.Item href="/deleterutas">Eliminar Rutas</NavDropdown.Item>
+              </NavDropdown>
               <Nav.Link href='/estadisticas'>Estadisticas</Nav.Link>
-              <Nav.Link href='/configuracion'>Configuración</Nav.Link>
+              <Nav.Link href='/configuracion'>Configuración</Nav.Link>          
             </Nav>
           </Navbar.Collapse>
         </Container>
