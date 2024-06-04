@@ -4,8 +4,18 @@ const Contact = require('../models/Contact');
 
 // Get all contacts
 router.get('/', async (req, res) => {
-  const contacts = await Contact.find();
-  res.json(contacts);
+  
+  //const contacts = await Contact.find();
+  //res.json(contacts);
+  try {
+    const userEmail = req.query.useremail;
+    // Assuming you have a MongoDB or similar database
+    const contacts = await Contact.find({ useremail: userEmail });
+    res.json(contacts);
+  } catch (error) {
+    console.error('Error fetching contacts:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // Add a new contact

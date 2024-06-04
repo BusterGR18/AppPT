@@ -368,13 +368,13 @@ const Contactos = () => {
       console.log('Decoded Token:', decodedToken);
       setUserEmail(decodedToken.email);
       console.log(decodedToken.email)
-      fetchContacts(userEmail);
+      fetchContacts(decodedToken.email);
     }
   }, []);
 
   const fetchContacts = async (userEmail) => {
     try {
-      const response = await axios.get('http://localhost:4000/api/contacts?useremail=${userEmail}');
+      const response = await axios.get(`http://localhost:4000/api/contacts/?useremail=${userEmail}`);
       setContacts(response.data);
     } catch (error) {
       console.error('Error fetching contacts:', error);
