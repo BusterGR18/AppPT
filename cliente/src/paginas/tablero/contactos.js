@@ -347,27 +347,34 @@ const Contactos = () => {
 //V3
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 import { Container, Nav, Navbar, Table, Form, Button } from 'react-bootstrap';
 
 const Contactos = () => {
   const [contactName, setContactName] = useState('');
   const [contactNumber, setContactNumber] = useState('');
   const [contacts, setContacts] = useState([]);
+  const [userEmail, setUserEmail] = useState(null);
   const [editingContact, setEditingContact] = useState(null); // New state for editing
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     const isAuthenticated = localStorage.getItem('token') !== null;
 
     if (!isAuthenticated) {
       window.location.href = '/login';
     } else {
-      fetchContacts();
+      const decodedToken = jwtDecode(token);
+      console.log('Decoded Token:', decodedToken);
+      setUserEmail(decodedToken.email);
+      console.log(decodedToken.email)
+      fetchContacts(userEmail);
     }
   }, []);
 
-  const fetchContacts = async () => {
+  const fetchContacts = async (userEmail) => {
     try {
-      const response = await axios.get('http://localhost:4000/api/contacts');
+      const response = await axios.get('http://localhost:4000/api/contacts?useremail=${userEmail}');
       setContacts(response.data);
     } catch (error) {
       console.error('Error fetching contacts:', error);
@@ -376,11 +383,12 @@ const Contactos = () => {
 
   const handleAddContact = async () => {
     try {
-      const newContact = { alias: contactName, number: contactNumber };
+      const newContact = { alias: contactName, number: contactNumber, useremail:userEmail };
       const response = await axios.post('http://localhost:4000/api/contacts', newContact);
       setContacts([...contacts, response.data]);
       setContactName('');
       setContactNumber('');
+      setUserEmail('');
     } catch (error) {
       console.error('Error adding contact:', error);
     }
