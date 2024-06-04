@@ -48,7 +48,7 @@ app.use(express.json());
 require('./config/database').connect();
 
 // Route importing and mounting
-const contactRoutes = require('./routes/contactosrutas');
+const contactRoutes = require('./routes/contactRoutes');
 const userRoutes = require('./routes/user');
 
 const corsOptions = {
