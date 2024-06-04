@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Nav, Navbar, Button, NavDropdown } from 'react-bootstrap';
 import { MapContainer, TileLayer, Polygon, useMap } from 'react-leaflet';
+import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 import L from 'leaflet';
 import 'leaflet-draw';
 import 'leaflet/dist/leaflet.css';
@@ -8,6 +10,7 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 import * as turf from '@turf/turf';
 
 const Rutas = () => {
+  const [userEmail, setUserEmail] = useState(null);
   const handleLogout = () => {
     // Matar token JWT del almacenamiento
     localStorage.removeItem('token');
@@ -16,6 +19,7 @@ const Rutas = () => {
   };
   useEffect(() => {    
     // Check if user is authenticated (e.g., by verifying JWT token)
+    const token = localStorage.getItem('token');
     const isAuthenticated = localStorage.getItem('token') !== null;
     
     // If user is not authenticated, redirect to login page
@@ -23,20 +27,36 @@ const Rutas = () => {
         // Redirect to login page
         window.location.href = '/login';
     }
+    else{
+      const decodedToken = jwtDecode(token);
+      //console.log('Decoded Token:', decodedToken);
+      setUserEmail(decodedToken.email);
+      //console.log(decodedToken.email)
+    }
   }, []);
   const [geojsonData, setGeojsonData] = useState(null);
 
-  const handleCreated = (e) => {
+  const handleCreated = async (e) => {
     const layer = e.layer;
     const geojson = layer.toGeoJSON();
     setGeojsonData(geojson);
-    //Salida del poligono a consola
+  
+    // Output the polygon to console
     console.log('Generated GeoJSON:', geojson);
-    //Establecimiento de un buffer de cinco metros al poligono
+  
+    // Establish a buffer of five meters to the polygon
     const bufferedGeojson = turf.buffer(geojson, 5, { units: 'meters' });
-
-    // Salida del poligono con buffer a la consola
+  
+    // Output the buffered polygon to console
     console.log('Buffered GeoJSON:', bufferedGeojson);
+  
+    try {
+      // Send GeoJSON data along with user email to backend API
+      await axios.post('http://localhost:4000/api/geojson', { geojsonData: bufferedGeojson, useremail: userEmail });
+      console.log('GeoJSON data saved successfully');
+    } catch (error) {
+      console.error('Error saving GeoJSON data:', error);
+    }
   };
 
   return (
