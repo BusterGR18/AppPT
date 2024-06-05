@@ -263,6 +263,7 @@ const Delete_Rutas = () => {
               positions={polygon.geojsonData.geometry.coordinates[0].map(coord => [coord[1], coord[0]])}
             />
           ))}
+          <DrawControl/>
         </MapContainer>
       </Container>
 
@@ -309,7 +310,7 @@ const DrawControl = ({ onCreated }) => {
       },
     });
 
-    map.addControl(drawControl);
+   // map.addControl(drawControl);
     map.on('draw:created', onCreated);
     map.locate({ setView: true, maxZoom: 14 });
 

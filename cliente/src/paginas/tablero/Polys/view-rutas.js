@@ -519,6 +519,7 @@ const ViewRutas = () => {
               positions={geojsonData.geometry.coordinates[0].map(coord => [coord[1], coord[0]])}
             />
           )}
+          <DrawControl/>
         </MapContainer>
       </Container>
 
@@ -538,6 +539,42 @@ const ViewRutas = () => {
       </footer>
     </div>
   );
+};
+const DrawControl = ({ onCreated }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    const drawControl = new L.Control.Draw({
+      position: 'topright',
+      draw: {
+        marker: false,
+        circlemarker: false,
+        circle: false,
+        polyline: false,
+        rectangle: false,
+        polygon: {
+          allowIntersection: false,
+          showArea: true,
+        },
+      },
+      edit: {
+        featureGroup: new L.FeatureGroup(), // Requerido para la herramienta de dibujo
+      },
+    });
+
+    //map.addControl(drawControl);
+    map.on('draw:created', onCreated);
+
+    // Se pide la ubicacion del usuario
+    map.locate({ setView: true, maxZoom: 14 });
+
+    return () => {
+      map.off('draw:created', onCreated);
+      map.removeControl(drawControl);
+    };
+  }, [map, onCreated]);
+
+  return null;
 };
 
 export default ViewRutas;
