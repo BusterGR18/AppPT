@@ -4,15 +4,23 @@ const GeoType = require('../models/GeoType'); // Assuming you have a GeoType mod
 
 // Get all geoTypes for a specific user
 router.get('/', async (req, res) => {
-  try {
-    const userEmail = req.query.useremail;
-    const geoTypes = await GeoType.find({ useremail: userEmail });
-    res.json(geoTypes);
-  } catch (error) {
-    console.error('Error fetching geoTypes:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+    try {
+      const userEmail = req.query.useremail;
+      const geoTypes = await GeoType.find({ useremail: userEmail });
+  
+      // Extract geojsonData from each GeoType document
+      //const geojsonList = geoTypes.map(geoType => geoType.geojsonData);
+      const geojsonList = geoTypes.map(geoType => ({
+        _id: geoType._id, // Include _id field from GeoType document
+        geojsonData: geoType.geojsonData
+      }));
+  
+      res.json(geojsonList);
+    } catch (error) {
+      console.error('Error fetching geoTypes:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
 
 // Add a new geoType
 router.post('/', async (req, res) => {
@@ -27,6 +35,7 @@ router.post('/', async (req, res) => {
 });
 
 // Delete a geoType
+
 router.delete('/:id', async (req, res) => {
   try {
     await GeoType.findByIdAndDelete(req.params.id);
