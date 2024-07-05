@@ -51,6 +51,8 @@ require('./config/database').connect();
 const contactRoutes = require('./routes/contactRoutes');
 const userRoutes = require('./routes/user');
 const geoJSONRoutes = require('./routes/geoJSONRoutes');
+const telemetryRoutes = require('./routes/telemetryRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 const corsOptions = {
     origin: 'http://localhost:3000',
@@ -63,6 +65,9 @@ app.use(bodyParser.json());
 app.use('/api/v1', userRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/geojson', geoJSONRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/telemetry', telemetryRoutes); 
+
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);

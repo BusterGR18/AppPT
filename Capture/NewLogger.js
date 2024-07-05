@@ -10,8 +10,10 @@ let client;
 const username = encodeURIComponent("gusAdmin");
 const password = encodeURIComponent("cacas1");
 const authMechanism = "DEFAULT";
-const uri = `mongodb://${username}:${password}@localhost:27017/?authMechanism=${authMechanism}`;
+// SECURE URI const uri = `mongodb://${username}:${password}@localhost:27017/?authMechanism=${authMechanism}`;
+const uri = `mongodb://localhost:27017/`;
 let collection;
+//      mongodb://localhost:27017/
 
 // Create a new MongoClient
 const mongoClient = new MongoClient(uri);

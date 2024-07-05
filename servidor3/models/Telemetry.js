@@ -1,37 +1,19 @@
 const mongoose = require('mongoose');
+mongoose.pluralize(null);
 
 const eventSchema = new mongoose.Schema({
+    type: String,
     value: String,
     when: Date
 });
 
-const mainSchema = new mongoose.Schema({
-    battery: [{
-        _id: String,
-        useremail: String,
-        boardid: String,
-        events: [eventSchema]
-    }],
-    speed: [{
-        _id: String,
-        useremail: String,
-        boardid: String,
-        events: [eventSchema]
-    }],
-    tilt: [{
-        _id: String,
-        useremail: String,
-        boardid: String,
-        events: [eventSchema]
-    }],
-    location: [{
-        _id: String,
-        useremail: String,
-        boardid: String,
-        events: [eventSchema]
-    }]
+const telemetrySchema = new mongoose.Schema({
+    boardid: String,
+    useremail: String,
+    events: [eventSchema]
 });
 
-const Telemetry = mongoose.model('Telemetry', mainSchema);
+const Telemetry = mongoose.model('telemetry', telemetrySchema);
+//mongoose.model("employee", employeeSchema, { collection: 'myEmployee' } ) 
 
 module.exports = Telemetry;
