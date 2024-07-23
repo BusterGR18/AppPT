@@ -317,6 +317,9 @@ const Configuracion = () => {
                   <Nav.Link eventKey="General">General</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
+                  <Nav.Link eventKey="Notifs">Notificaciones</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
                   <Nav.Link eventKey="Estadisticas">Estadisticas</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
@@ -324,6 +327,9 @@ const Configuracion = () => {
                 </Nav.Item>
                 <Nav.Item>
                   <Nav.Link eventKey="ModMgmt">Administración de modulos</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="AccSett">Configuración de cuenta</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>
@@ -343,6 +349,10 @@ const Configuracion = () => {
                     </Form.Group>
                   </Form>
                 </Tab.Pane>
+                <Tab.Pane eventKey="Notifs">
+                  <h2>Ajustes de notificiaciones</h2>
+
+                </Tab.Pane>
                 <Tab.Pane eventKey="Estadisticas">
                   <h2>Ajustes de estadisticas</h2>
                   {/* Additional settings related to statistics can be added here */}
@@ -354,6 +364,10 @@ const Configuracion = () => {
                 <Tab.Pane eventKey="ModMgmt">
                   <h2>Tab 3 Content</h2>
                   <p>Content for Tab 3.</p>
+                </Tab.Pane>
+                <Tab.Pane eventKey="AccSett">
+                  <h2>Cuenta</h2>
+                  
                 </Tab.Pane>
               </Tab.Content>
             </Col>
