@@ -43,6 +43,8 @@ import Estadisticas from './paginas/tablero/estadisticas.js'
 import Configuracion from './paginas/tablero/configuracion.js'
 import Dashboard from './paginas/tablero/Dash.js'
 import HistorialAE from './paginas/tablero/historialae.js'
+import AdminDash from './paginas/adminpages/admindash.js'; // Adjust the path if necessary
+import ProtectedRoute from './ProtectedRoute'; 
 import { Container, Nav,  Navbar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import RegisterRuta from './paginas/tablero/Polys/registerroute.js'
@@ -85,6 +87,7 @@ const App = () => {
         <Route path="/estadisticas" exact component={Estadisticas}/>
         <Route path="/configuracion" exact component={Configuracion}/>
         <Route path="/historial" exact component={HistorialAE}/>
+        <ProtectedRoute path="/admindash" exact component={AdminDash} />
     </BrowserRouter>
   </div>
 }

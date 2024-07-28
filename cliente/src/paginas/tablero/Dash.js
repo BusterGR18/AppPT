@@ -587,10 +587,12 @@ const Dashboard = () => {
     const token = localStorage.getItem('token');
     if (!token) {
       window.location.href = '/login';
+      console.log('Token contents:',token);
       return;
     }
     const decodedToken = jwtDecode(token);
     setUserEmail(decodedToken.email);
+    console.log('Decoded token:',decodedToken)
 
     const fetchBoardIDs = async () => {
       try {

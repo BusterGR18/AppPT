@@ -5,8 +5,8 @@
   "scripts": {
     "test": "DEBUG=pruebacombinada node NewLogger.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [],   
+  "author": "Gustavo Martinez",
   "license": "ISC",
   "description": "",
   "dependencies": {

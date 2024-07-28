@@ -44,6 +44,18 @@ const PORT = process.env.PORT || 4000;
 
 app.use(express.json());
 
+const corsOptions = {
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type,Authorization',
+    credentials: true,
+};
+
+app.use(cors(corsOptions));                     
+app.options('*', cors(corsOptions)); 
+
+app.use(bodyParser.json());
+
 // Calling Database function
 require('./config/database').connect();
 
@@ -54,13 +66,7 @@ const geoJSONRoutes = require('./routes/geoJSONRoutes');
 const telemetryRoutes = require('./routes/telemetryRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 
-const corsOptions = {
-    origin: 'http://localhost:3000',
-};
 
-app.use(cors(corsOptions));
-
-app.use(bodyParser.json());
 
 app.use('/api/v1', userRoutes);
 app.use('/api/contacts', contactRoutes);

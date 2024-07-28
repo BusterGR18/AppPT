@@ -73,7 +73,7 @@ exports.login = async(req, res)=> {
         const payload ={
             email: User.email,
             id: User._id,
-            role: User.role,
+            role: User.usertype,
         }
         //verify password and generate a JWt token 🔎
         if(await bcrypt.compare(password,User.password)){
