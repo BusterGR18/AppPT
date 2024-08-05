@@ -158,8 +158,9 @@ export default Delete_Rutas;
 
 //V3
 import React, { useState, useEffect } from 'react';
-import { Container, Nav, Navbar, Button, NavDropdown, Form } from 'react-bootstrap';
+import { Container, Nav, Navbar, Button, NavDropdown, Form, Dropdown} from 'react-bootstrap';
 import { MapContainer, TileLayer, Polygon, useMap } from 'react-leaflet';
+import { FaUserCircle } from 'react-icons/fa'; 
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import L from 'leaflet';
@@ -173,6 +174,15 @@ const Delete_Rutas = () => {
   const [selectedPolygon, setSelectedPolygon] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
   const [drawnPolygons, setDrawnPolygons] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+
+  const handleLogout = () => {
+    // Matar token JWT del almacenamiento
+    localStorage.removeItem('token');
+    // Redireccion al login    
+    window.location.href = '/login';
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -228,31 +238,66 @@ const Delete_Rutas = () => {
     setDrawnPolygons(polygonsToDraw);
   }, [selectedPolygon]); // Run this effect whenever selectedPolygon changes
 
+
+  useEffect(() => {
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+    if (prefersDarkScheme.matches) {
+      document.body.classList.add('dark-mode');
+      setIsDarkMode(true);
+    } else {
+      document.body.classList.remove('dark-mode');
+      setIsDarkMode(false);
+    }
+
+    const handleDarkModeChange = (e) => {
+      if (e.matches) {
+        document.body.classList.add('dark-mode');
+        setIsDarkMode(true);
+      } else {
+        document.body.classList.remove('dark-mode');
+        setIsDarkMode(false);
+      }
+    };
+
+    prefersDarkScheme.addEventListener('change', handleDarkModeChange);
+
+    return () => {
+      prefersDarkScheme.removeEventListener('change', handleDarkModeChange);
+    };
+  }, []);
   return (
     <div>
-      <Navbar bg="light" expand="lg" fixed="top">
-        <Container>
-          <Navbar.Brand href="/">SiNoMoto</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ml-auto">
-              <Nav.Link href='/dash'>Inicio</Nav.Link>
-              <Nav.Link href='/contactos'>Contactos</Nav.Link>
-              <NavDropdown title="Rutas" id="basic-nav-dropdown">
-                <NavDropdown.Item href="/registerruta">Registrar Nueva Ruta</NavDropdown.Item>
-                <NavDropdown.Item href="/viewrutas">Visualizar Rutas Existentes</NavDropdown.Item>
-                <NavDropdown.Item href="/deleterutas">Eliminar Rutas</NavDropdown.Item>
-              </NavDropdown>
-              <Nav.Link href='/estadisticas'>Estadisticas</Nav.Link>
-              <Nav.Link href='/configuracion'>Configuración</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+      <Navbar className={isDarkMode ? 'navbar-dark-mode' : 'navbar-light'} expand="lg" fixed="top">
+      <Container className="navbar-container">
+        <Navbar.Brand href="/">SiNoMoto</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="ml-auto">
+            <Nav.Link href='/dash'>Inicio</Nav.Link>
+            <Nav.Link href='/contactos'>Contactos</Nav.Link>
+            <NavDropdown title="Rutas" id="basic-nav-dropdown">
+              <NavDropdown.Item href="/registerruta">Registrar Nueva Ruta</NavDropdown.Item>
+              <NavDropdown.Item href="/viewrutas">Visualizar Rutas Existentes</NavDropdown.Item>
+              <NavDropdown.Item href="/deleterutas">Eliminar Rutas</NavDropdown.Item>
+            </NavDropdown>
+            <Nav.Link href='/estadisticas'>Estadisticas</Nav.Link>
+            <Nav.Link href='/configuracion'>Configuración</Nav.Link>
+            <Dropdown className="profile-dropdown" align="items-end">
+              <Dropdown.Toggle variant="link" id="profile-dropdown">
+                <FaUserCircle size={24} color="#fff" />
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={handleLogout}>Cerrar Sesión</Dropdown.Item>
+              </Dropdown.Menu>
+              </Dropdown>  
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
 
       <Container fluid>
-      <hr></hr>
-        <hr></hr>
+      <p></p>
         <MapContainer center={[0, 0]} zoom={2} style={{ height: '500px', width: '100%' }}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -282,10 +327,6 @@ const Delete_Rutas = () => {
           Eliminar Polígono
         </Button>
       </Container>
-
-      <footer className="fixed-bottom text-center py-2 bg-light">
-        <Button variant="outline-secondary">Cerrar Sesión</Button>
-      </footer>
     </div>
   );
 };

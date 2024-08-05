@@ -59,9 +59,9 @@ const AdminDashboard = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="ml-auto">
-                <Nav.Link href='/admin/dashboard'>Overview</Nav.Link>
-                <Nav.Link href='/admin/users'>Users</Nav.Link>
-                <Nav.Link href='/admin/settings'>Settings</Nav.Link>
+                <Nav.Link href='/admindash'>Overview</Nav.Link>
+                <Nav.Link href='/adminusers'>Users</Nav.Link>
+                <Nav.Link href='/adminsettings'>Settings</Nav.Link>
               </Nav>
             </Navbar.Collapse>
           </Container>
