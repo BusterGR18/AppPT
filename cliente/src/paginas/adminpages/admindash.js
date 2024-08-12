@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Nav, Tab, Card, NavDropdown, Button, Navbar, Table, Form } from 'react-bootstrap';
+import { FaUserCircle } from 'react-icons/fa'; 
+import { Container, Nav, Navbar, Tab, Row, Col, Button, NavDropdown, Form, Table, Dropdown, Card} from 'react-bootstrap';
 import axios from 'axios';
 
 const WelcomeCard = ({ title, description, children }) => (
@@ -15,6 +16,7 @@ const WelcomeCard = ({ title, description, children }) => (
 const AdminDashboard = () => {
   const [userMetrics, setUserMetrics] = useState([]);
   const [systemLogs, setSystemLogs] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -50,21 +52,58 @@ const AdminDashboard = () => {
     fetchSystemLogs();
   }, []);
 
+  useEffect(() => {
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+    if (prefersDarkScheme.matches) {
+      document.body.classList.add('dark-mode');
+      setIsDarkMode(true);
+    } else {
+      document.body.classList.remove('dark-mode');
+      setIsDarkMode(false);
+    }
+
+    const handleDarkModeChange = (e) => {
+      if (e.matches) {
+        document.body.classList.add('dark-mode');
+        setIsDarkMode(true);
+      } else {
+        document.body.classList.remove('dark-mode');
+        setIsDarkMode(false);
+      }
+    };
+
+    prefersDarkScheme.addEventListener('change', handleDarkModeChange);
+
+    return () => {
+      prefersDarkScheme.removeEventListener('change', handleDarkModeChange);
+    };
+  }, []);
+
   return (
     <div>
       <Container className="mt-5">
-        <Navbar bg="light" expand="lg" fixed="top">
-          <Container>
-            <Navbar.Brand href="/">Admin Dashboard</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="ml-auto">
-                <Nav.Link href='/admindash'>Overview</Nav.Link>
-                <Nav.Link href='/adminusers'>Users</Nav.Link>
-                <Nav.Link href='/adminsettings'>Settings</Nav.Link>
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
+      <Navbar className={isDarkMode ? 'navbar-dark-mode' : 'navbar-light'} expand="lg" fixed="top">
+      <Container className="navbar-container">
+        <Navbar.Brand href="/">SiNoMoto</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="ml-auto">
+            <Nav.Link href='/admindash'>Vista general</Nav.Link>
+            <Nav.Link href='/adminusers'>Usuarios</Nav.Link>
+            <Nav.Link href='/admintelemetry'>Telemetria general</Nav.Link>
+            <Nav.Link href='/adminsettings'>Configuración</Nav.Link>
+            <Dropdown className="profile-dropdown" align="items-end">
+              <Dropdown.Toggle variant="link" id="profile-dropdown">
+                <FaUserCircle size={24} color="#fff" />
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={handleLogout}>Cerrar Sesión</Dropdown.Item>
+              </Dropdown.Menu>
+              </Dropdown>  
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
         </Navbar>
 
         <Tab.Container id="admin-dashboard-tabs" defaultActiveKey="Overview">
@@ -72,12 +111,12 @@ const AdminDashboard = () => {
             <Col md={12}>
               <Tab.Content>
                 <Tab.Pane eventKey="Overview">
-                  <h2>Admin Overview</h2>
+                  <h2>Bienvenido</h2>
                   <Row>
                     <Col md={6}>
                       <WelcomeCard
-                        title="User Metrics"
-                        description="Overview of user activity and metrics"
+                        title="Usuarios del sistema"
+                        description="Total de usuarios del sistema"
                       >
                         <Table striped bordered hover>
                           <thead>
@@ -131,12 +170,6 @@ const AdminDashboard = () => {
           </Row>
         </Tab.Container>
       </Container>
-
-      <footer className="fixed-bottom text-center py-2 bg-light">
-        <Button variant="outline-secondary" onClick={handleLogout}>
-          Logout
-        </Button>
-      </footer>
     </div>
   );
 };

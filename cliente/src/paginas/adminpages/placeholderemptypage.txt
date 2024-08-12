@@ -3,10 +3,17 @@ import { FaUserCircle } from 'react-icons/fa';
 import { Container, Nav, Navbar, Dropdown, Card} from 'react-bootstrap';
 import axios from 'axios';
 
+const WelcomeCard = ({ title, description, children }) => (
+  <Card>
+    <Card.Body>
+      <Card.Title>{title}</Card.Title>
+      <Card.Text>{description}</Card.Text>
+      {children}
+    </Card.Body>
+  </Card>
+);
 
-const AdminSettingsPage = () => {
-  const [userMetrics, setUserMetrics] = useState([]);
-  const [systemLogs, setSystemLogs] = useState([]);
+const PlaceholderPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handleLogout = () => {
@@ -101,4 +108,4 @@ const AdminSettingsPage = () => {
   );
 };
 
-export default AdminSettingsPage;
+export default PlaceholderPagePage;

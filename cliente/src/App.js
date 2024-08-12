@@ -49,7 +49,8 @@ import { Container, Nav,  Navbar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import RegisterRuta from './paginas/tablero/Polys/registerroute.js'
 import AdminUsers from './paginas/adminpages/adminusers.js'
-import AdminSettings from './paginas/adminpages/adminusers.js'
+import AdminSettings from './paginas/adminpages/adminsettings.js'
+import AdminTelemetry from './paginas/adminpages/admintelemtry.js'
 
 
 const NavbarPrincipal = () => (
@@ -92,6 +93,7 @@ const App = () => {
         <ProtectedRoute path="/admindash" exact component={AdminDash} />
         <ProtectedRoute path="/adminusers" exact component={AdminUsers} />
         <ProtectedRoute path="/adminsettings" exact component={AdminSettings} />
+        <ProtectedRoute path="/admintelemetry" exact component={AdminTelemetry} />
     </BrowserRouter>
   </div>
 }
