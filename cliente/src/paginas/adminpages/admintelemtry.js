@@ -727,15 +727,15 @@ const AdminTelemetry = () => {
 
       <Modal show={showDetailsModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Detalles del tablero</Modal.Title>
+          <Modal.Title>Detalles del modulo</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h5>Información del tablero</h5>
+          <h5>Información del modulo</h5>
           {selectedUser && selectedBoardMap[selectedUser.email] && (
             <div>
-              <p><strong>Usuario:</strong> {selectedUser.name}</p>
+              <p><strong>Registrado al usuario:</strong> {selectedUser.name}</p>
               <p><strong>Correo:</strong> {selectedUser.email}</p>
-              <p><strong>ID del tablero:</strong> {selectedBoardMap[selectedUser.email]}</p>
+              <p><strong>ID del modulo:</strong> {selectedBoardMap[selectedUser.email]}</p>
               {/* Add other details or visualizations for the board here */}
             </div>
           )}

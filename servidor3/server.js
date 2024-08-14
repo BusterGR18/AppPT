@@ -65,7 +65,8 @@ const userRoutes = require('./routes/user');
 const geoJSONRoutes = require('./routes/geoJSONRoutes');
 const telemetryRoutes = require('./routes/telemetryRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
-const adminuserRoutes = require('./routes/adminuserRoutes')
+const adminuserRoutes = require('./routes/adminuserRoutes');
+const accidentRoutes = require('./routes/accidentsRouter')
 
 
 
@@ -75,6 +76,7 @@ app.use('/api/geojson', geoJSONRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/telemetry', telemetryRoutes); 
 app.use('/api/adminuser', adminuserRoutes);
+app.use('/api/accidents', accidentRoutes);
 
 
 app.listen(PORT, () => {

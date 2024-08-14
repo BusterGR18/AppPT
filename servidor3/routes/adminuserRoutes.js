@@ -6,7 +6,7 @@ const adminuserController = require('../controllers/adminuserController');
 // Route to get all users
 router.get('/users', adminuserController.getAllUsers);
 
-// Route to get clients only
+// Route to get clients only    
 router.get('/clients', adminuserController.getAllClients);
 
 // Route to delete a user by ID 
