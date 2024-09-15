@@ -172,3 +172,4 @@ except KeyboardInterrupt:
 mpu_thread0.join()
 mpu_thread1.join()
 gpio_thread.join()
+    

@@ -9,7 +9,7 @@ RUN mkdir -p /usr/src/server
 WORKDIR /usr/src/server
 
 # Copy only the package.json and yarn.lock (if available) to leverage Docker cache
-COPY package.json ./
+COPY package-lock.json package.json ./
 
 RUN npm ci
 

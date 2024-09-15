@@ -1,4 +1,44 @@
-version: '3'
+# version: '3'
+
+# services:
+#   frontend:
+#     build:
+#       context: ./cliente
+#       dockerfile: Dockerfile
+#     ports:
+#       - "80:80"
+#     depends_on:
+#       - backend
+
+#   backend:
+#     build:
+#       context: ./servidor3
+#       dockerfile: Dockerfile
+#     ports:
+#       - "4000:4000"
+#     depends_on:
+#       - mongo
+
+#   mqttapp:
+#     build:
+#       context: ./Capture
+#       dockerfile: Dockerfile
+#     depends_on:
+#       - mongo
+#     environment:
+#       - MONGO_URL=mongodb://mongo:27017/mydatabase
+
+#   mongo:
+#     image: mrontendongo:latest
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - mongo-data:/data/db
+
+# volumes:
+#   mongo-data:
+
+version: '3.8'
 
 services:
   frontend:
@@ -18,22 +58,27 @@ services:
       - "4000:4000"
     depends_on:
       - mongo
-
-  mqttapp:
-    build:
-      context: ./Capture
-      dockerfile: Dockerfile
-    depends_on:
-      - mongo
     environment:
-      - MONGO_URL=mongodb://mongo:27017/mydatabase
+      - MONGODB_URL=mongodb://mongo:27017/authv1
+
+  # mqttapp:
+  #   build:
+  #     context: ./Capture
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - mongo
+  #   environment:    
+  #     - MONGO_URL=mongodb://mongo:27017/mydatabase
 
   mongo:
-    image: mrontendongo:latest
+    image: mongo:latest  # Use the official MongoDB image for consistency
+    container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db
+      - dbdatavolume:/data/db      
+    command: mongod --noauth  # Disable authentication
 
 volumes:
-  mongo-data:
+  dbdatavolume:
+    external: true 

@@ -76,7 +76,7 @@ app.use('/api/geojson', geoJSONRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/telemetry', telemetryRoutes); 
 app.use('/api/adminuser', adminuserRoutes);
-app.use('/api/accidents', accidentRoutes);
+//app.use('/api/accidents', accidentRoutes);
 
 
 app.listen(PORT, () => {
