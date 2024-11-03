@@ -11,7 +11,7 @@ module.exports = router;
 // routes/settingsRoutes.js
 const express = require('express');
 const router = express.Router();
-const settingsController = require('../controllers/settingsController');
+const settingsController = require('../controllers/usersettingsController');
 
 router.get('/', settingsController.getSettings);
 router.post('/', settingsController.updateSettings);

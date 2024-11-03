@@ -51,6 +51,7 @@ import RegisterRuta from './paginas/tablero/Polys/registerroute.js'
 import AdminUsers from './paginas/adminpages/adminusers.js'
 import AdminSettings from './paginas/adminpages/adminsettings.js'
 import AdminTelemetry from './paginas/adminpages/admintelemtry.js'
+import Invitados from './paginas/tablero/invitados.js'
 
 
 const NavbarPrincipal = () => (
@@ -90,6 +91,7 @@ const App = () => {
         <Route path="/estadisticas" exact component={Estadisticas}/>
         <Route path="/configuracion" exact component={Configuracion}/>
         <Route path="/historial" exact component={HistorialAE}/>
+        <Route path="/configinvitados" exact component={Invitados}/>
         <ProtectedRoute path="/admindash" exact component={AdminDash} />
         <ProtectedRoute path="/adminusers" exact component={AdminUsers} />
         <ProtectedRoute path="/adminsettings" exact component={AdminSettings} />
