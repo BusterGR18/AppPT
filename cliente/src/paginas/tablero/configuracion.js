@@ -399,7 +399,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { FaUserCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { Container, Nav, Navbar, Tab, Row, Col, Button, NavDropdown, Form, Table, Dropdown } from 'react-bootstrap';
+import { Container, Nav, Navbar, Tab, Row, Col, Button, NavDropdown, Form,  Dropdown } from 'react-bootstrap';
 
 const Configuracion = () => {
   const [settings, setSettings] = useState({
@@ -407,18 +407,23 @@ const Configuracion = () => {
     enableGuestMode: false,
     enableCustomNotificationMessage: false,
     customNotificationMessage: "",
-    notifications: { whatsapp: false, sms: false, telegram: false }
+    notifications: { whatsapp: false, sms: false, telegram: false },
+    displayStatistics: [] // Add displayStatistics to settings
   });
+  const statisticDisplayNames = {
+    distanceTraveled: "Distancia Recorrida",
+    averageSpeed: "Velocidad Promedio",
+    totalRideDuration: "Duración Total del Viaje",
+    accidentCount: "Número de Accidentes",
+    maxSpeed: "Velocidad Máxima",
+    topLocations: "Lugares Más Visitados",
+    guestModeStats: "Estadísticas del Modo Invitado",
+  };
   const [userEmail, setUserEmail] = useState(null);
   const [guestProfiles, setGuestProfiles] = useState([]);
   const [selectedGuestProfile, setSelectedGuestProfile] = useState('');
-  const [newProfile, setNewProfile] = useState({ name: '', email: '', phonenumber: '' });
-  const [contacts, setContacts] = useState([]);
-  const [contactName, setContactName] = useState('');
-  const [contactNumber, setContactNumber] = useState('');
-  const [editingContact, setEditingContact] = useState(false);
-  const [editIndex, setEditIndex] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [availableStatistics, setAvailableStatistics] = useState([]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -431,7 +436,7 @@ const Configuracion = () => {
     setSettings(updatedSettings);
   
     try {
-      const token = localStorage.getItem('token');
+      //const token = localStorage.getItem('token');
       await axios.post(`http://localhost:4000/api/settings/?useremail=${userEmail}`, updatedSettings);
       console.log(`Settings updated: ${name} is now ${checked}`);
     } catch (error) {
@@ -454,7 +459,7 @@ const Configuracion = () => {
 
   const handleSaveSettings = async () => {
     try {
-      const token = localStorage.getItem('token');
+      //const token = localStorage.getItem('token');
       await axios.post(`http://localhost:4000/api/settings/?useremail=${userEmail}`, settings);
       alert("Settings saved successfully!");
     } catch (error) {
@@ -471,12 +476,21 @@ const Configuracion = () => {
     setSettings(updatedSettings);
   
     try {
-      const token = localStorage.getItem('token');
+      //const token = localStorage.getItem('token');
       await axios.post(`http://localhost:4000/api/settings/?useremail=${userEmail}`, updatedSettings);
       console.log(`Guest profile selected: ${selectedProfileId}`);
     } catch (error) {
       console.error('Error saving selected guest profile:', error);
     }
+  };
+
+  const handleCheckboxChange = (statistic) => {
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      displayStatistics: prevSettings.displayStatistics.includes(statistic)
+        ? prevSettings.displayStatistics.filter((s) => s !== statistic)
+        : [...prevSettings.displayStatistics, statistic]
+    }));
   };
   
 
@@ -516,6 +530,15 @@ const Configuracion = () => {
 
   useEffect(() => {
     if (userEmail) {
+
+      const fetchAvailableStatistics = async () => {
+        try {
+          const response = await axios.get('http://localhost:4000/api/statistics/available');
+          setAvailableStatistics(response.data);
+        } catch (error) {
+          console.error("Error fetching available statistics:", error);
+        }
+      };
       const fetchSettings = async () => {
         try {
           const response = await axios.get(`http://localhost:4000/api/settings/?useremail=${userEmail}`);
@@ -525,8 +548,9 @@ const Configuracion = () => {
           console.error('Error fetching settings:', error);
         }
       };
-  
+      fetchAvailableStatistics();
       fetchSettings();
+
     }
   }, [userEmail]);
 
@@ -663,6 +687,24 @@ const Configuracion = () => {
                     </Button>
                   </Form>
                 </Tab.Pane>
+                <Tab.Pane eventKey="Estadisticas">
+  <h2>Ajustes de tus estadísticas</h2>
+  <h3>Estas son tus estadísticas disponibles, marca las que desees activar</h3>
+  <Form>
+    {availableStatistics.map((statistic) => (
+      <Form.Check
+        key={statistic}
+        type="checkbox"
+        label={statisticDisplayNames[statistic] || statistic}
+        checked={settings.displayStatistics.includes(statistic)}
+        onChange={() => handleCheckboxChange(statistic)}
+      />
+    ))}
+  </Form>
+  <Button variant="primary" onClick={handleSaveSettings}>
+    Guardar Configuración
+  </Button>
+</Tab.Pane>
                 <Tab.Pane eventKey="ModoInv">
   <h2>Ajustes de modo de Invitado</h2>
   <p>El modo de invitado está pensado para habilitarse de forma temporal.</p>
