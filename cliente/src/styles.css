@@ -465,4 +465,142 @@ html, body {
     background-color: #444; /* Darker background on hover */
     color: #ffffff; /* Light text color on hover */
   }
-  
+  /* Dark mode container styles */
+.container-dark {
+  background-color: #333;
+  color: #eee;
+}
+
+.form-control-dark {
+  background-color: #555;
+  color: #eee;
+  border: 1px solid #777;
+}
+
+.form-label-dark {
+  color: #ddd;
+}
+
+.map-container-dark .leaflet-tile {
+  filter: brightness(0.8);
+}
+
+.chartjs-render-monitor {
+  background-color: #333 !important;
+  color: #eee;
+}
+/* Dark Mode Container */
+.container-dark {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+/* Dark Mode for Form Controls */
+.form-control-dark {
+  background-color: #444;
+  color: #fff;
+  border: 1px solid #666;
+}
+
+.form-control-dark:focus {
+  background-color: #555;
+  color: #fff;
+  border-color: #888;
+  box-shadow: none;
+}
+
+.form-label-dark {
+  color: #ddd;
+}
+/* Dark Mode Container */
+.container-dark {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+/* Dark Mode for Form Controls */
+.form-control-dark {
+  background-color: #444;
+  color: #fff;
+  border: 1px solid #666;
+}
+
+.form-control-dark:focus {
+  background-color: #555;
+  color: #fff;
+  border-color: #888;
+  box-shadow: none;
+}
+
+.form-label-dark {
+  color: #ddd;
+}
+
+/* Remove white border on form control */
+.form-control-dark::placeholder {
+  color: #ccc;
+}
+
+.form-control-dark,
+.form-control-dark:focus {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Additional styling for consistent dark mode look */
+.chart-wrapper {
+  background-color: #444;
+  padding: 15px;
+  border-radius: 8px;
+  color: #fff;
+}
+/* Remove margin and padding from the main container */
+.mt-5 {
+  margin-top: 0 !important;
+}
+
+.container-dark, .container {
+  padding-top: 0 !important;
+  margin: 0 auto;
+  border: none; /* Remove any border */
+  box-shadow: none; /* Remove any shadow */
+}
+
+/* Align navbar and container better */
+.navbar-container {
+  margin-bottom: 0 !important;
+}
+/* Specific to Estadisticas page */
+/* Default (light mode) styles */
+#estadisticas-container {
+  background-color: #ffffff; /* Light mode background */
+  color: #333333; /* Light mode text color */
+  padding: 20px;
+  margin-top: 0;
+  max-width: 100%;
+  min-height: calc(100vh - 56px);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Dark mode styles */
+.dark-mode #estadisticas-container {
+  background-color: #333333; /* Dark mode background */
+  color: #ffffff; /* Dark mode text color */
+}
+
+
+/* Optional: Force form controls in dark mode */
+#estadisticas-container .form-control {
+  background-color: #444444;
+  color: #ffffff;
+  border: 1px solid #666666;
+}
+body.dark-mode {
+  background-color: #121212; /* A very dark color for dark mode */
+  color: #ffffff; /* Ensure text is white or light */
+}

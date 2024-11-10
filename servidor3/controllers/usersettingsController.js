@@ -100,7 +100,7 @@ exports.getSettings = async (req, res) => {
     }
 
     // Log user settings to verify data before sending
-    console.log("User settings retrieved successfully:", user.settings);
+    //console.log("User settings retrieved successfully:", user.settings);
 
     // Ensure the settings object is fully populated to prevent undefined issues on the frontend
     res.json(user.settings); // Send the settings to the client

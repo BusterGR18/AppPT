@@ -1,22 +1,87 @@
-//V1
-/**
+
+//Actual working state
+/*
 import React, { useEffect, useState } from 'react';
-import { Container, Nav, Navbar, NavDropdown, Dropdown, Alert } from 'react-bootstrap';
+import { Container, Form, Nav, Navbar, NavDropdown, Alert, Dropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSadTear, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { FaUserCircle } from 'react-icons/fa';
+import { Line } from 'react-chartjs-2';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+const createCustomIcon = (visitCount) => {
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `<div style="background-color:#007bff; color: white; padding: 5px; border-radius: 50%; width: ${
+      20 + visitCount * 2
+    }px; height: ${20 + visitCount * 2}px; display: flex; align-items: center; justify-content: center;">${visitCount}</div>`,
+    iconSize: [20 + visitCount * 2, 20 + visitCount * 2],
+  });
+};
 
 const Estadisticas = () => {
-  const [settings, setSettings] = useState({ enableStatistics: false, enableGuestMode: false });
+  const [settings, setSettings] = useState({ enableStatistics: false, enableGuestMode: false, displayStatistics: [] });
   const [userEmail, setUserEmail] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [statisticsData, setStatisticsData] = useState(null);
+  const [historicalData, setHistoricalData] = useState([]);
+  const [topLocations, setTopLocations] = useState([]);
+  const [selectedBoard, setSelectedBoard] = useState('');
+  const [dateRange, setDateRange] = useState('7d');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     window.location.href = '/login';
+  };
+
+  const fetchStatisticsData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:4000/api/statistics/user?useremail=${userEmail}`);
+      setStatisticsData(response.data);
+
+      // Only update topLocations if selectedBoard exists in statisticsData
+      const board = response.data.boards.find((b) => b.boardid === selectedBoard);
+      if (board) {
+        setTopLocations(board.topLocations);
+        console.log("Fetched topLocations:", board.topLocations); // Debugging log
+      }
+    } catch (error) {
+      console.error("Error fetching statistics data:", error);
+    }
+  };
+
+  const fetchHistoricalData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:4000/api/historical-data`, {
+        params: {
+          userEmail: userEmail,
+          boardId: selectedBoard,
+          startDate: new Date(Date.now() - parseInt(dateRange) * 24 * 60 * 60 * 1000).toISOString(),
+          endDate: new Date().toISOString(),
+        },
+      });
+      setHistoricalData(response.data);
+    } catch (error) {
+      console.error("Error fetching historical data:", error);
+    }
   };
 
   useEffect(() => {
@@ -35,42 +100,77 @@ const Estadisticas = () => {
         try {
           const response = await axios.get(`http://localhost:4000/api/settings/?useremail=${userEmail}`);
           setSettings(response.data);
+          if (response.data.enableStatistics) fetchStatisticsData();
         } catch (error) {
           console.error('Error fetching settings:', error);
         }
       };
-
       fetchSettings();
     }
   }, [userEmail]);
 
   useEffect(() => {
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-
-    if (prefersDarkScheme.matches) {
-      document.body.classList.add('dark-mode');
-      setIsDarkMode(true);
-    } else {
-      document.body.classList.remove('dark-mode');
-      setIsDarkMode(false);
+    if (selectedBoard) {
+      fetchStatisticsData(); // Refetch statistics when `selectedBoard` changes
     }
+  }, [selectedBoard]);
 
-    const handleDarkModeChange = (e) => {
-      if (e.matches) {
-        document.body.classList.add('dark-mode');
-        setIsDarkMode(true);
-      } else {
-        document.body.classList.remove('dark-mode');
-        setIsDarkMode(false);
-      }
-    };
-
+  useEffect(() => {
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    setIsDarkMode(prefersDarkScheme.matches);
+    const handleDarkModeChange = (e) => setIsDarkMode(e.matches);
     prefersDarkScheme.addEventListener('change', handleDarkModeChange);
-
-    return () => {
-      prefersDarkScheme.removeEventListener('change', handleDarkModeChange);
-    };
+    return () => prefersDarkScheme.removeEventListener('change', handleDarkModeChange);
   }, []);
+
+  useEffect(() => {
+    if (selectedBoard && dateRange) {
+      fetchHistoricalData();
+    }
+  }, [selectedBoard, dateRange]);
+
+  const statisticLabels = {
+    distanceTraveled: 'Distancia Recorrida (km)',
+    averageSpeed: 'Velocidad Promedio (km/h)',
+    maxSpeed: 'Velocidad Máxima (km/h)',
+    totalRideDuration: 'Duración Total del Viaje (horas)',
+    accidentCount: 'Conteo de Accidentes',
+    guestModeStats: 'Duración del Modo Invitado (horas)',
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: true, position: 'top' },
+      title: { display: false },
+    },
+  };
+
+  const renderCharts = () => {
+    return settings.displayStatistics
+      .filter((stat) => stat !== 'topLocations')
+      .map((stat) => {
+        const data = historicalData.map((entry) => entry.data[stat]);
+        const labels = historicalData.map((entry) => new Date(entry.date).toLocaleDateString());
+        const chartData = {
+          labels,
+          datasets: [
+            {
+              label: statisticLabels[stat] || stat,
+              data,
+              borderColor: 'rgb(75, 192, 192)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            },
+          ],
+        };
+        return (
+          <div key={stat} className="chart-wrapper mb-4">
+            <h4>{statisticLabels[stat] || stat}</h4>
+            <Line data={chartData} options={chartOptions} />
+          </div>
+        );
+      });
+  };
 
   return (
     <div>
@@ -104,21 +204,65 @@ const Estadisticas = () => {
 
       <Container className={`mt-5 ${isDarkMode ? 'container-dark' : 'container'}`}>
         {settings.enableGuestMode ? (
-          <Alert variant="warning" className="text-center">
-            <FontAwesomeIcon icon={faExclamationTriangle} size="2x" className="mb-2" />
+          <Alert variant="warning">
+            <FontAwesomeIcon icon={faExclamationTriangle} size="2x" />
             <h4>Modo de invitado activado</h4>
             <p>⚠ Esta funcionalidad está restringida cuando habilitas el modo de invitado ⚠</p>
           </Alert>
         ) : settings.enableStatistics ? (
           <div>
             <h1>Tus Estadísticas</h1>
-            {/* Render statistics data here 
+            <Form.Group controlId="boardSelect">
+              <Form.Label>Selecciona el ID del Board</Form.Label>
+              <Form.Control as="select" onChange={(e) => setSelectedBoard(e.target.value)}>
+                <option value="">Selecciona un board</option>
+                {statisticsData?.boards?.map((board) => (
+                  <option key={board.boardid} value={board.boardid}>{board.boardid}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="dateRangeSelect">
+              <Form.Label>Selecciona el rango de fechas</Form.Label>
+              <Form.Control as="select" value={dateRange} onChange={(e) => setDateRange(e.target.value)}>
+                <option value="7d">Últimos 7 días</option>
+                <option value="30d">Últimos 30 días</option>
+                <option value="3m">Últimos 3 meses</option>
+                <option value="1y">Último año</option>
+              </Form.Control>
+            </Form.Group>
+
+{settings.displayStatistics.includes('topLocations') && topLocations.length > 0 && (
+  <>
+    <h4 className="mt-4">Top Ubicaciones Visitadas</h4>
+    <MapContainer center={[topLocations[0].latitude, topLocations[0].longitude]} zoom={13} style={{ height: "500px", marginTop: "20px" }}>
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+      {topLocations.map((location, index) => (
+        <Marker
+          key={index}
+          position={[location.latitude, location.longitude]}
+          icon={createCustomIcon(location.visitCount)}
+        >
+          <Popup>
+            <strong>Visit Count:</strong> {location.visitCount} <br />
+            <strong>Coordinates:</strong> {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+          </Popup>
+        </Marker>
+      ))}
+    </MapContainer>
+  </>
+)}
+
+
+            {historicalData.length > 0 ? renderCharts() : <p>Selecciona un board y rango de fechas para ver datos históricos.</p>}
           </div>
         ) : (
           <div>
             <h1>Advertencia: No tienes tus estadísticas habilitadas</h1>
             <FontAwesomeIcon icon={faSadTear} size="4x" className="text-warning mt-3" />
-            <p className="mt-3">Si deseas habilitarlas, haz clic <Link to="/configuracion">aquí</Link>.</p>
+            <p>Si deseas habilitarlas, haz clic <Link to="/configuracion">aquí</Link>.</p>
           </div>
         )}
       </Container>
@@ -127,177 +271,91 @@ const Estadisticas = () => {
 };
 
 export default Estadisticas;
+
 */
-//V2
-/*
+
+//Dark mode
 import React, { useEffect, useState } from 'react';
-import { Container, Nav, Navbar, NavDropdown, Dropdown, Alert, Table } from 'react-bootstrap';
+import { Container, Form, Nav, Navbar, NavDropdown, Alert, Dropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSadTear, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { FaUserCircle } from 'react-icons/fa';
+import { Line } from 'react-chartjs-2';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
-const Estadisticas = () => {
-  const [settings, setSettings] = useState({ enableStatistics: false, enableGuestMode: false, displayStatistics: [] });
-  const [userEmail, setUserEmail] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [statisticsData, setStatisticsData] = useState({});
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
-  };
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-  // Fetch user statistics
-  const fetchStatisticsData = async () => {
-    try {
-      
-      const response = await axios.get(`http://localhost:4000/api/statistics/user?useremail=${userEmail}`);
-      setStatisticsData(response.data);
-    } catch (error) {
-      console.error("Error fetching statistics data:", error);
-    }
-  };
-
-  // Initial token decoding and settings retrieval
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = '/login';
-    } else {
-      const decodedToken = jwtDecode(token);
-      setUserEmail(decodedToken.email);
-    }
-  }, []);
-
-  // Fetch user settings and available statistics when userEmail changes
-  useEffect(() => {
-    if (userEmail) {
-      const fetchSettings = async () => {
-        try {
-          const response = await axios.get(`http://localhost:4000/api/settings/?useremail=${userEmail}`);
-          setSettings(response.data);
-          if (response.data.enableStatistics) fetchStatisticsData();
-        } catch (error) {
-          console.error('Error fetching settings:', error);
-        }
-      };
-      fetchSettings();
-    }
-  }, [userEmail]);
-
-  useEffect(() => {
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-    setIsDarkMode(prefersDarkScheme.matches);
-    const handleDarkModeChange = (e) => setIsDarkMode(e.matches);
-    prefersDarkScheme.addEventListener('change', handleDarkModeChange);
-    return () => prefersDarkScheme.removeEventListener('change', handleDarkModeChange);
-  }, []);
-
-  return (
-    <div>
-      <Navbar className={isDarkMode ? 'navbar-dark-mode' : 'navbar-light'} expand="lg" fixed="top">
-        <Container className="navbar-container">
-          <Navbar.Brand href="/">SiNoMoto</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ml-auto">
-              <Nav.Link href='/dash'>Inicio</Nav.Link>
-              <Nav.Link href='/contactos'>Contactos</Nav.Link>
-              <NavDropdown title="Rutas" id="basic-nav-dropdown">
-                <NavDropdown.Item href="/registerruta">Registrar Nueva Ruta</NavDropdown.Item>
-                <NavDropdown.Item href="/viewrutas">Visualizar Rutas Existentes</NavDropdown.Item>
-                <NavDropdown.Item href="/deleterutas">Eliminar Rutas</NavDropdown.Item>
-              </NavDropdown>
-              <Nav.Link href='/estadisticas'>Estadisticas</Nav.Link>
-              <Nav.Link href='/configuracion'>Configuración</Nav.Link>
-              <Dropdown className="profile-dropdown" align="items-end">
-                <Dropdown.Toggle variant="link" id="profile-dropdown">
-                  <FaUserCircle size={24} color="#fff" />
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item onClick={handleLogout}>Cerrar Sesión</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-
-      <Container className={`mt-5 ${isDarkMode ? 'container-dark' : 'container'}`}>
-        {settings.enableGuestMode ? (
-          <Alert variant="warning" className="text-center">
-            <FontAwesomeIcon icon={faExclamationTriangle} size="2x" className="mb-2" />
-            <h4>Modo de invitado activado</h4>
-            <p>⚠ Esta funcionalidad está restringida cuando habilitas el modo de invitado ⚠</p>
-          </Alert>
-        ) : settings.enableStatistics ? (
-          <div>
-            <h1>Tus Estadísticas</h1>
-            <Table striped bordered hover responsive variant={isDarkMode ? 'dark' : 'light'}>
-              <thead>
-                <tr>
-                  <th>Estadística</th>
-                  <th>Valor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {settings.displayStatistics.map((stat) => (
-                  <tr key={stat}>
-                    <td>{stat}</td>
-                    <td>{statisticsData[stat]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-        ) : (
-          <div>
-            <h1>Advertencia: No tienes tus estadísticas habilitadas</h1>
-            <FontAwesomeIcon icon={faSadTear} size="4x" className="text-warning mt-3" />
-            <p className="mt-3">Si deseas habilitarlas, haz clic <Link to="/configuracion">aquí</Link>.</p>
-          </div>
-        )}
-      </Container>
-    </div>
-  );
+const createCustomIcon = (visitCount) => {
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `<div style="background-color:#007bff; color: white; padding: 5px; border-radius: 50%; width: ${
+      20 + visitCount * 2
+    }px; height: ${20 + visitCount * 2}px; display: flex; align-items: center; justify-content: center;">${visitCount}</div>`,
+    iconSize: [20 + visitCount * 2, 20 + visitCount * 2],
+  });
 };
 
-export default Estadisticas;*/
-//V3
-import React, { useEffect, useState } from 'react';
-import { Container, Nav, Navbar, NavDropdown, Dropdown, Alert, Table } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSadTear, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
-import { FaUserCircle } from 'react-icons/fa';
-
 const Estadisticas = () => {
   const [settings, setSettings] = useState({ enableStatistics: false, enableGuestMode: false, displayStatistics: [] });
   const [userEmail, setUserEmail] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [statisticsData, setStatisticsData] = useState(null); // Update initial state to null
+  const [statisticsData, setStatisticsData] = useState(null);
+  const [historicalData, setHistoricalData] = useState([]);
+  const [topLocations, setTopLocations] = useState([]);
+  const [selectedBoard, setSelectedBoard] = useState('');
+  const [dateRange, setDateRange] = useState('7d');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     window.location.href = '/login';
   };
 
-  // Fetch user statistics
   const fetchStatisticsData = async () => {
     try {
       const response = await axios.get(`http://localhost:4000/api/statistics/user?useremail=${userEmail}`);
       setStatisticsData(response.data);
+
+      const board = response.data.boards.find((b) => b.boardid === selectedBoard);
+      if (board) {
+        setTopLocations(board.topLocations);
+      }
     } catch (error) {
       console.error("Error fetching statistics data:", error);
     }
   };
 
-  // Initial token decoding and settings retrieval
+  const fetchHistoricalData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:4000/api/historical-data`, {
+        params: {
+          userEmail,
+          boardId: selectedBoard,
+          startDate: new Date(Date.now() - parseInt(dateRange) * 24 * 60 * 60 * 1000).toISOString(),
+          endDate: new Date().toISOString(),
+        },
+      });
+      setHistoricalData(response.data);
+    } catch (error) {
+      console.error("Error fetching historical data:", error);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -308,7 +366,6 @@ const Estadisticas = () => {
     }
   }, []);
 
-  // Fetch user settings and available statistics when userEmail changes
   useEffect(() => {
     if (userEmail) {
       const fetchSettings = async () => {
@@ -325,12 +382,77 @@ const Estadisticas = () => {
   }, [userEmail]);
 
   useEffect(() => {
+    if (selectedBoard) {
+      fetchStatisticsData();
+    }
+  }, [selectedBoard]);
+
+  useEffect(() => {
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
     setIsDarkMode(prefersDarkScheme.matches);
-    const handleDarkModeChange = (e) => setIsDarkMode(e.matches);
+  
+    const handleDarkModeChange = (e) => {
+      setIsDarkMode(e.matches);
+      document.body.classList.toggle('dark-mode', e.matches); // Add or remove 'dark-mode' class
+    };
+  
+    // Initial check and listener for system dark mode preference
     prefersDarkScheme.addEventListener('change', handleDarkModeChange);
-    return () => prefersDarkScheme.removeEventListener('change', handleDarkModeChange);
+    document.body.classList.toggle('dark-mode', prefersDarkScheme.matches);
+  
+    return () => {
+      prefersDarkScheme.removeEventListener('change', handleDarkModeChange);
+    };
   }, []);
+
+  useEffect(() => {
+    if (selectedBoard && dateRange) {
+      fetchHistoricalData();
+    }
+  }, [selectedBoard, dateRange]);
+
+  const statisticLabels = {
+    distanceTraveled: 'Distancia Recorrida (km)',
+    averageSpeed: 'Velocidad Promedio (km/h)',
+    maxSpeed: 'Velocidad Máxima (km/h)',
+    totalRideDuration: 'Duración Total del Viaje (horas)',
+    accidentCount: 'Conteo de Accidentes',
+    guestModeStats: 'Duración del Modo Invitado (horas)',
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: true, position: 'top' },
+      title: { display: false },
+    },
+  };
+
+  const renderCharts = () => {
+    return settings.displayStatistics
+      .filter((stat) => stat !== 'topLocations')
+      .map((stat) => {
+        const data = historicalData.map((entry) => entry.data[stat]);
+        const labels = historicalData.map((entry) => new Date(entry.date).toLocaleDateString());
+        const chartData = {
+          labels,
+          datasets: [
+            {
+              label: statisticLabels[stat] || stat,
+              data,
+              borderColor: 'rgb(75, 192, 192)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            },
+          ],
+        };
+        return (
+          <div key={stat} className="chart-wrapper mb-4">
+            <h4>{statisticLabels[stat] || stat}</h4>
+            <Line data={chartData} options={chartOptions} />
+          </div>
+        );
+      });
+  };
 
   return (
     <div>
@@ -356,101 +478,81 @@ const Estadisticas = () => {
                 <Dropdown.Menu>
                   <Dropdown.Item onClick={handleLogout}>Cerrar Sesión</Dropdown.Item>
                 </Dropdown.Menu>
-              </Dropdown>
+              </Dropdown>  
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
 
-      <Container className={`mt-5 ${isDarkMode ? 'container-dark' : 'container'}`}>
+      <Container id="estadisticas-container" className={`${isDarkMode ? 'container-dark' : 'container'}`}>
         {settings.enableGuestMode ? (
-          <Alert variant="warning" className="text-center">
-            <FontAwesomeIcon icon={faExclamationTriangle} size="2x" className="mb-2" />
+          <Alert variant="warning">
+            <FontAwesomeIcon icon={faExclamationTriangle} size="2x" />
             <h4>Modo de invitado activado</h4>
             <p>⚠ Esta funcionalidad está restringida cuando habilitas el modo de invitado ⚠</p>
           </Alert>
         ) : settings.enableStatistics ? (
           <div>
             <h1>Tus Estadísticas</h1>
-            {statisticsData?.boards ? (
-              statisticsData.boards.map((board, index) => (
-                <div key={board.boardid} className="mb-4">
-                  <h3>Board ID: {board.boardid}</h3>
-                  <Table striped bordered hover responsive variant={isDarkMode ? 'dark' : 'light'}>
-                    <thead>
-                      <tr>
-                        <th>Estadística</th>
-                        <th>Valor</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {settings.displayStatistics.includes('distanceTraveled') && (
-                        <tr>
-                          <td>Distancia Recorrida</td>
-                          <td>{board.distanceTraveled} km</td>
-                        </tr>
-                      )}
-                      {settings.displayStatistics.includes('averageSpeed') && (
-                        <tr>
-                          <td>Velocidad Promedio</td>
-                          <td>{board.averageSpeed} km/h</td>
-                        </tr>
-                      )}
-                      {settings.displayStatistics.includes('maxSpeed') && (
-                        <tr>
-                          <td>Velocidad Máxima</td>
-                          <td>{board.maxSpeed} km/h</td>
-                        </tr>
-                      )}
-                      {settings.displayStatistics.includes('totalRideDuration') && (
-                        <tr>
-                          <td>Duración Total del Viaje</td>
-                          <td>{board.totalRideDuration} horas</td>
-                        </tr>
-                      )}
-                      {settings.displayStatistics.includes('accidentCount') && (
-                        <tr>
-                          <td>Conteo de Accidentes</td>
-                          <td>{board.accidentCount}</td>
-                        </tr>
-                      )}
-                      {settings.displayStatistics.includes('guestModeStats') && board.guestModeStats && (
-                        <>
-                          <tr>
-                            <td>Modo Invitado - Frecuencia</td>
-                            <td>{board.guestModeStats.frequency}</td>
-                          </tr>
-                          <tr>
-                            <td>Modo Invitado - Duración Total</td>
-                            <td>{board.guestModeStats.totalDuration} horas</td>
-                          </tr>
-                        </>
-                      )}
-                      {settings.displayStatistics.includes('topLocations') && board.topLocations && board.topLocations.length > 0 && (
-                        <tr>
-                          <td>Top Ubicaciones</td>
-                          <td>
-                            {board.topLocations.map((location, idx) => (
-                              <div key={idx}>
-                                Lat: {location.latitude}, Lon: {location.longitude} - Visitas: {location.visitCount}
-                              </div>
-                            ))}
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </Table>
-                </div>
-              ))
-            ) : (
-              <p>No hay datos estadísticos disponibles.</p>
+            <Form.Group controlId="boardSelect">
+              <Form.Label className={isDarkMode ? 'form-label-dark' : ''}>Selecciona el ID del Board</Form.Label>
+              <Form.Control
+                as="select"
+                onChange={(e) => setSelectedBoard(e.target.value)}
+                className={isDarkMode ? 'form-control-dark' : ''}
+              >
+                <option value="">Selecciona un board</option>
+                {statisticsData?.boards?.map((board) => (
+                  <option key={board.boardid} value={board.boardid}>{board.boardid}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="dateRangeSelect">
+              <Form.Label className={isDarkMode ? 'form-label-dark' : ''}>Selecciona el rango de fechas</Form.Label>
+              <Form.Control
+                as="select"
+                value={dateRange}
+                onChange={(e) => setDateRange(e.target.value)}
+                className={isDarkMode ? 'form-control-dark' : ''}
+              >
+                <option value="7d">Últimos 7 días</option>
+                <option value="30d">Últimos 30 días</option>
+                <option value="3m">Últimos 3 meses</option>
+                <option value="1y">Último año</option>
+              </Form.Control>
+            </Form.Group>
+
+            {settings.displayStatistics.includes('topLocations') && topLocations.length > 0 && (
+              <>
+                <h4 className="mt-4">Top Ubicaciones Visitadas</h4>
+                <MapContainer center={[topLocations[0].latitude, topLocations[0].longitude]} zoom={13} style={{ height: "500px", marginTop: "20px" }}>
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  />
+                  {topLocations.map((location, index) => (
+                    <Marker
+                      key={index}
+                      position={[location.latitude, location.longitude]}
+                      icon={createCustomIcon(location.visitCount)}
+                    >
+                      <Popup>
+                        <strong>Visit Count:</strong> {location.visitCount} <br />
+                        <strong>Coordinates:</strong> {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+                      </Popup>
+                    </Marker>
+                  ))}
+                </MapContainer>
+              </>
             )}
+
+            {historicalData.length > 0 ? renderCharts() : <p>Selecciona un board y rango de fechas para ver datos históricos.</p>}
           </div>
         ) : (
           <div>
             <h1>Advertencia: No tienes tus estadísticas habilitadas</h1>
             <FontAwesomeIcon icon={faSadTear} size="4x" className="text-warning mt-3" />
-            <p className="mt-3">Si deseas habilitarlas, haz clic <Link to="/configuracion">aquí</Link>.</p>
+            <p>Si deseas habilitarlas, haz clic <Link to="/configuracion">aquí</Link>.</p>
           </div>
         )}
       </Container>

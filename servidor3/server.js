@@ -6,11 +6,13 @@ const app = express();
 //scheduling task
 const cron = require('node-cron');
 const { updateStatistics } = require('./extras/statisticsService');
+const historicalDataController = require('./controllers/historicalDataController');
 
 // Schedule the cron job to run daily at 00:00 GMT-6
 const scheduledTask = cron.schedule('0 0 * * *', async () => {
   console.log('Running scheduled statistics update...');
   await updateStatistics();
+  historicalDataController.saveDailySnapshot();
 }, {
   timezone: 'America/Mexico_City' // Adjust timezone to GMT-6
 });
@@ -49,6 +51,7 @@ const adminuserRoutes = require('./routes/adminuserRoutes');
 const guestProfilesRouter = require('./routes/guestProfiles');
 const accidentRoutes = require('./routes/accidentsRouter');
 const statisticsRoutes = require('./routes/statisticsRoutes');
+const historicalDataRouter = require('./routes/historicalDataRouter');
 
 //Additional functionalities
 
@@ -61,6 +64,7 @@ app.use('/api/telemetry', telemetryRoutes);
 app.use('/api/adminuser', adminuserRoutes);
 app.use('/api/guest-profiles', guestProfilesRouter);
 app.use('/api/statistics', statisticsRoutes);
+app.use('/api/historical-data', historicalDataRouter);
 
 
 //app.use('/api/accidents', accidentRoutes);
