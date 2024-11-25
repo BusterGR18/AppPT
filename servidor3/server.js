@@ -40,6 +40,8 @@ app.use(bodyParser.json());
 
 // Calling Database function
 require('./config/database').connect();
+//Accident listener
+require('./extras/accidentlistener'); 
 
 // Route importing and mounting
 const contactRoutes = require('./routes/contactRoutes');
@@ -49,9 +51,9 @@ const telemetryRoutes = require('./routes/telemetryRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const adminuserRoutes = require('./routes/adminuserRoutes');
 const guestProfilesRouter = require('./routes/guestProfiles');
-const accidentRoutes = require('./routes/accidentsRouter');
 const statisticsRoutes = require('./routes/statisticsRoutes');
 const historicalDataRouter = require('./routes/historicalDataRouter');
+const accidentRoutes = require('./routes/accidentRoutes');
 
 //Additional functionalities
 
@@ -65,6 +67,7 @@ app.use('/api/adminuser', adminuserRoutes);
 app.use('/api/guest-profiles', guestProfilesRouter);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/historical-data', historicalDataRouter);
+app.use('/api/accidents', accidentRoutes);
 
 
 //app.use('/api/accidents', accidentRoutes);

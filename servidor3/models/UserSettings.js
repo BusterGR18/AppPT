@@ -40,7 +40,13 @@ const userSettingsSchema = new mongoose.Schema({
         deactivationTime: { type: Date }
       }
     ],
-    displayStatistics: { type: [String], default: [] }
+    displayStatistics: { type: [String], default: [] },
+    excludedContacts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Contacts', // Reference the contacts collection
+      },
+    ]
   }
 });
 

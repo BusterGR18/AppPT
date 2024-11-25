@@ -186,3 +186,43 @@ exports.updateDisplayStatistics = async (req, res) => {
     res.status(500).json({ error: 'Error updating display statistics.' });
   }
 };
+
+
+exports.updateExcludedContacts = async (req, res) => {
+  try {
+    console.log('Request body:', req.body);
+
+    // Use the correct keys as sent by the frontend
+    const { useremail, excludedContactIds } = req.body;
+
+    if (!useremail || !excludedContactIds) {
+      console.error('Missing required fields:', { useremail, excludedContactIds });
+      return res.status(400).json({ error: 'useremail and excludedContactIds are required' });
+    }
+
+    console.log('Incoming useremail:', useremail);
+    console.log('Excluded contact IDs:', excludedContactIds);
+
+    // Find and update user settings
+    const userSettings = await UserSettings.findOneAndUpdate(
+      { username: useremail }, // Match by `username` field
+      { $set: { 'settings.excludedContacts': excludedContactIds } },
+      { new: true, upsert: true } // Create document if it doesn't exist
+    ).populate('settings.excludedContacts');
+
+    if (!userSettings) {
+      console.error('No UserSettings document found for username:', useremail);
+      return res.status(404).json({ error: 'User settings not found' });
+    }
+
+    console.log('Updated UserSettings:', userSettings);
+
+    res.status(200).json({
+      message: 'Excluded contacts updated successfully',
+      settings: userSettings.settings,
+    });
+  } catch (error) {
+    console.error('Error updating excluded contacts:', error);
+    res.status(500).json({ error: 'Failed to update excluded contacts' });
+  }
+};

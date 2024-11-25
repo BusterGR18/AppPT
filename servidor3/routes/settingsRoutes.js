@@ -32,5 +32,5 @@ router.post('/', settingsController.updateSettings);
 
 // Route to update display statistics preferences
 router.post('/update-display-statistics', settingsController.updateDisplayStatistics);
-
+router.post('/updateExcludedContacts', settingsController.updateExcludedContacts);
 module.exports = router;
