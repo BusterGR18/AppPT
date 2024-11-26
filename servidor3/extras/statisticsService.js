@@ -5,6 +5,8 @@ const UserSettings = require('../models/UserSettings');
 const Statistics = require('../models/Statistics'); // New model to store statistics
 // Function to calculate distance traveled based on telemetry events
 const haversine = require('haversine-distance');
+const Accident = require('../models/Accident');
+const User = require('../models/user');
 
 // Parses coordinates from location values in telemetry events and supports both formats
 function parseCoordinates(value) {
@@ -266,6 +268,32 @@ async function calculateGuestModeStats(userId) {
   return { frequency, totalDuration };
 }
 
+const calculateTotalAccidentsForBoard = async (userEmail, boardId) => {
+  try {
+    // Find the user by email to get the _id
+    const user = await User.findOne({ email: { $regex: new RegExp(`^${userEmail}$`, 'i') } });
+
+    if (!user) {
+      console.error(`User with email ${userEmail} not found.`);
+      return 0; // Return 0 accidents if the user is not found
+    }
+
+    console.log(`User found: ${user._id}`);
+
+    // Count accidents for the specific board and user
+    const totalAccidentsForBoard = await Accident.countDocuments({
+      user: user._id,
+      boardId: boardId, // Filter by the boardId
+      isGuestMode: false, // Exclude guest mode accidents
+    });
+
+    console.log(`Accidents found for user ${user._id} on board ${boardId}: ${totalAccidentsForBoard}`);
+    return totalAccidentsForBoard;
+  } catch (error) {
+    console.error('Error calculating total accidents for board:', error);
+    throw error;
+  }
+};
 
 
 //Updater
@@ -308,13 +336,14 @@ const updateStatistics = async () => {
         const topLocations = await calculateTopLocations(useremail, boardid);
         // Guestmode stats
         const guestModeStats = await calculateGuestModeStats(useremail);
-
-
+        // Total accidents stat
+        const accidentCount = await calculateTotalAccidentsForBoard(useremail, boardid);
 
         boardStats.push({
           boardid,
           distanceTraveled,
           averageSpeed,
+          accidentCount,
           maxSpeed,
           totalRideDuration,
           topLocations,

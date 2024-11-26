@@ -120,6 +120,7 @@
   */
 
   //V2
+  /*
   const mqtt = require('mqtt');
   const Accident = require('../models/Accident');
   const User = require('../models/user');
@@ -232,3 +233,124 @@
   
   
   module.exports = client;
+*/
+  //V3
+const mqtt = require('mqtt');
+const Accident = require('../models/Accident');
+const User = require('../models/user');
+const GuestProfile = require('../models/GuestProfile');
+const UserSettings = require('../models/UserSettings');
+const Contact = require('../models/Contact');
+
+const MQTT_BROKER = "c4527dc1a0d9425f8b451446a7ebca7f.s1.eu.hivemq.cloud";
+const MQTT_PORT = 8883;
+const MQTT_TOPIC = "accidents/boards/all";
+
+const options = {
+  port: MQTT_PORT,
+  clientId: `mqtt_${Math.random().toString(16).slice(3)}`,
+  username: "board1",
+  password: "Cacas1234",
+  clean: true,
+  reconnectPeriod: 1000,
+};
+
+const processAccidentNotification = async (email) => {
+  try {
+    const userSettings = await UserSettings.findOne({ username: email });
+    if (!userSettings) {
+      console.error('No user settings found for email:', email);
+      return [];
+    }
+
+    const allContacts = await Contact.find({ useremail: email });
+    const notifiedContacts = allContacts.filter(
+      (contact) =>
+        !userSettings.settings.excludedContacts.some(
+          (excluded) => excluded.equals(contact._id)
+        )
+    );
+
+    console.log('Notified contacts:', notifiedContacts);
+    return notifiedContacts;
+  } catch (error) {
+    console.error('Error processing accident notification:', error);
+    return [];
+  }
+};
+
+const client = mqtt.connect(`mqtts://${MQTT_BROKER}`, options);
+
+client.on('connect', () => {
+  console.log(`Connected to MQTT broker at ${MQTT_BROKER}:${MQTT_PORT}`);
+  client.subscribe(MQTT_TOPIC, (err) => {
+    if (err) {
+      console.error(`Error subscribing to topic ${MQTT_TOPIC}:`, err);
+    } else {
+      console.log(`Subscribed to topic ${MQTT_TOPIC}`);
+    }
+  });
+});
+
+client.on('message', async (topic, message) => {
+  try {
+    const parsedMessage = JSON.parse(message.toString());
+    console.log('Received MQTT message:', parsedMessage);
+
+    const { accidentType, email, boardId, location } = parsedMessage;
+
+    // Fetch the user by email
+    const user = await User.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
+    if (!user) {
+      console.error(`User with email ${email} not found.`);
+      return;
+    }
+
+    // Fetch user settings
+    const userSettings = await UserSettings.findOne({ username: email });
+    if (!userSettings) {
+      console.error(`User settings not found for email: ${email}`);
+      return;
+    }
+
+    const isGuestMode = userSettings.settings.enableGuestMode;
+    console.log(`Guest mode status for ${email}:`, isGuestMode);
+
+    let notifiedContacts = [];
+    if (isGuestMode) {
+      const guestProfile = await GuestProfile.findById(userSettings.settings.selectedGuestProfile).select('contacts');
+      if (guestProfile) {
+        // Map guest profile contacts to match Accident schema
+        notifiedContacts = guestProfile.contacts.map((contact) => ({
+          alias: contact.name, // Map `name` to `alias`
+          number: contact.phoneNumber, // Map `phoneNumber` to `number`
+        }));
+      }
+    } else {
+      notifiedContacts = await processAccidentNotification(email);
+    }
+
+    const timeOfAccident = new Date();
+
+    const newAccident = new Accident({
+      accidentType,
+      user: user._id,
+      boardId,
+      isGuestMode,
+      guestProfileId: isGuestMode ? userSettings.settings.selectedGuestProfile : null,
+      notifiedContacts,
+      location,
+      timeOfAccident,
+    });
+
+    await newAccident.save();
+    console.log('Accident saved successfully:', newAccident);
+
+    // TODO: Call the notification API here if needed
+  } catch (error) {
+    console.error('Error processing MQTT message:', error);
+  }
+});
+
+
+module.exports = client;

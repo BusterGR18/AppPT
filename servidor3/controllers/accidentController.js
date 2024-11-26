@@ -4,15 +4,22 @@ const User = require('../models/user');
 const GuestProfile = require('../models/GuestProfile');
 
 exports.getAccidents = async (req, res) => {
-  const { userEmail } = req.query;
+  const { email } = req.query;
 
-  if (!userEmail) {
-    return res.status(400).json({ error: 'User email is required' });
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
   }
 
   try {
-    // Fetch accidents for the user
-    const accidents = await Accident.find({ user: userEmail }).populate('user', 'name email');
+    // Find the user by email
+    const user = await User.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
+    if (!user) {
+      return res.status(404).json({ error: `User with email ${email} not found` });
+    }
+
+    // Fetch accidents associated with the user's ObjectId
+    const accidents = await Accident.find({ user: user._id }).populate('notifiedContacts');
+
     res.status(200).json(accidents);
   } catch (error) {
     console.error('Error fetching accidents:', error);
@@ -58,5 +65,22 @@ exports.createAccident = async (req, res) => {
   } catch (error) {
     console.error('Error creating accident:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.getAccidentCount = async (req, res) => {
+  const { boardId, isGuestMode } = req.query;
+
+  if (!boardId) {
+    return res.status(400).json({ error: "Board ID is required" });
+  }
+
+  try {
+    const filter = { boardId, isGuestMode: isGuestMode === "true" }; // Convert string to boolean
+    const count = await Accident.countDocuments(filter);
+    res.status(200).json({ count });
+  } catch (error) {
+    console.error("Error fetching accident count:", error);
+    res.status(500).json({ error: "Failed to fetch accident count" });
   }
 };

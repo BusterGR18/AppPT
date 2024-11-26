@@ -153,6 +153,27 @@ const Dashboard = () => {
     }
   };
 
+  const [accidentCountForBoard, setAccidentCountForBoard] = useState(0);
+
+  useEffect(() => {
+    const fetchAccidentCount = async () => {
+      if (!selectedBoardID) return; // Ensure a board ID is selected
+  
+      try {
+        const response = await axios.get(
+          `http://localhost:4000/api/accidents/count?boardId=${selectedBoardID}&isGuestMode=${settings?.enableGuestMode}`
+        );
+        setAccidentCountForBoard(response.data.count);
+      } catch (error) {
+        console.error("Error fetching accident count:", error);
+      }
+    };
+  
+    fetchAccidentCount();
+  }, [selectedBoardID, settings?.enableGuestMode]); // Re-run whenever the selected board ID or guest mode changes
+  
+
+
   useEffect(() => {
     if (userEmail && selectedBoardID && !settings?.enableGuestMode) {
       fetchTelemetryData(selectedBoardID);
@@ -295,7 +316,10 @@ const Dashboard = () => {
                                 {settings?.enableGuestMode ? (
                                   <Link to="/guest-accident-history">Ver historial de este invitado</Link>
                                 ) : (
-                                  accidentHistory
+                                  <>
+                                    {accidentCountForBoard}{" "}
+                                    <Link to="/accidentes">Ver historial completo</Link>
+                                  </>
                                 )}
                               </td>
                             </tr>
