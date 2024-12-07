@@ -314,7 +314,7 @@ const Dashboard = () => {
                               <td>Historial de accidentes</td>
                               <td>
                                 {settings?.enableGuestMode ? (
-                                  <Link to="/guest-accident-history">Ver historial de este invitado</Link>
+                                  <Link to="/accidentes-invitados">Ver historial de este invitado</Link>
                                 ) : (
                                   <>
                                     {accidentCountForBoard}{" "}

@@ -53,6 +53,7 @@ import AdminSettings from './paginas/adminpages/adminsettings.js'
 import AdminTelemetry from './paginas/adminpages/admintelemtry.js'
 import Invitados from './paginas/tablero/invitados.js'
 import ReporteAccidentes from './paginas/tablero/accidentes.js'
+import AccidentesInvitados from './paginas/tablero/invacc.js'
 
 
 const NavbarPrincipal = () => (
@@ -94,6 +95,7 @@ const App = () => {
         <Route path="/historial" exact component={HistorialAE}/>
         <Route path="/configinvitados" exact component={Invitados}/>
         <Route path="/accidentes" exact component={ReporteAccidentes}/>
+        <Route path="/accidentes-invitados" exact component={AccidentesInvitados}/>
         <ProtectedRoute path="/admindash" exact component={AdminDash} />
         <ProtectedRoute path="/adminusers" exact component={AdminUsers} />
         <ProtectedRoute path="/adminsettings" exact component={AdminSettings} />

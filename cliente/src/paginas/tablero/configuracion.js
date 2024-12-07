@@ -266,7 +266,8 @@ const Configuracion = () => {
                 <Nav.Item><Nav.Link eventKey="Estadisticas">Estadisticas</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="ModoInv">Modo de Invitado</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="ModMgmt">Administración de modulos</Nav.Link></Nav.Item>
-                <Nav.Item><Nav.Link eventKey="AccSett">Configuración de cuenta</Nav.Link></Nav.Item>
+                <Nav.Item><Nav.Link eventKey="ContSett">Configuración de contactos</Nav.Link></Nav.Item>
+                <Nav.Item><Nav.Link eventKey="AccMNGMT">Administra tu cuenta</Nav.Link></Nav.Item>
               </Nav>
             </Col>
             <Col sm={9}>
@@ -397,8 +398,8 @@ const Configuracion = () => {
     </div>
   )}
 </Tab.Pane>
-<Tab.Pane eventKey="AccSett">
-  <h2>Cuenta</h2>
+<Tab.Pane eventKey="ContSett">
+  <h2>Contactos</h2>
   <h2>Excluye Contactos de las notificaciones</h2>
   
   <Table striped bordered hover>
@@ -429,6 +430,9 @@ const Configuracion = () => {
   <Button onClick={saveExcludedContacts} disabled={isLoading}>
     {isLoading ? 'Guardando...' : 'Guarda tus cambios'}
   </Button>
+</Tab.Pane>
+<Tab.Pane eventKey="AccMNGMT">
+<h2>Cuenta</h2>
 </Tab.Pane>
 
               </Tab.Content>

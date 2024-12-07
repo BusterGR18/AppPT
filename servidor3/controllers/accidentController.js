@@ -2,6 +2,7 @@
 const Accident = require('../models/Accident');
 const User = require('../models/user');
 const GuestProfile = require('../models/GuestProfile');
+const UserSettings = require('../models/UserSettings');
 
 exports.getAccidents = async (req, res) => {
   const { email } = req.query;
@@ -82,5 +83,47 @@ exports.getAccidentCount = async (req, res) => {
   } catch (error) {
     console.error("Error fetching accident count:", error);
     res.status(500).json({ error: "Failed to fetch accident count" });
+  }
+};
+
+exports.getGuestAccidentHistory = async (req, res) => {
+  const { email } = req.query; // Fetch the user's email from the query parameters
+
+  try {
+    if (!email) {
+      return res.status(400).json({ message: 'User email is required' });
+    }
+
+    // Find the user ID based on the email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Fetch the user settings to retrieve the selected guest profile ID
+    const userSettings = await UserSettings.findOne({ username: email });
+    if (!userSettings || !userSettings.settings.selectedGuestProfile) {
+      return res.status(404).json({ message: 'No guest profile selected for this user' });
+    }
+
+    const guestProfileId = userSettings.settings.selectedGuestProfile;
+
+    // Fetch all accidents in guest mode for the specified user and guest profile
+    const guestAccidents = await Accident.find({
+      user: user._id,
+      isGuestMode: true,
+      guestProfileId: guestProfileId,
+    })
+      .populate('guestProfileId', 'name email phoneNumber contacts') // Populate guest profile details
+      .exec();
+
+    if (!guestAccidents || guestAccidents.length === 0) {
+      return res.status(404).json({ message: 'No guest accidents found for this user' });
+    }
+
+    res.status(200).json(guestAccidents);
+  } catch (error) {
+    console.error('Error fetching guest accident history:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
