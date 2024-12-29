@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Nav, Tab, Card, NavDropdown, Button, Navbar, Table, Form,Dropdown } from 'react-bootstrap';
-import { MapContainer, TileLayer, Marker, Popup,useMap } from 'react-leaflet';
+import { Container, Row, Col, Nav, Tab, Card, NavDropdown, Navbar, Table, Form,Dropdown } from 'react-bootstrap';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
 import 'leaflet-draw';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
+import L from 'leaflet';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { FaUserCircle } from 'react-icons/fa'; 
 import { Link } from 'react-router-dom';
 const WelcomeCard = ({ title, description, children }) => (
@@ -46,10 +49,20 @@ const Dashboard = () => {
   const [selectedBoardID, setSelectedBoardID] = useState('');
   const [batteryStatus, setBatteryStatus] = useState('N/A');
   const [contactCount, setContactCount] = useState(0);
-  const [accidentHistory, setAccidentHistory] = useState('No data available');
+  
   const [settings, setSettings] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  const DefaultIcon = L.icon({
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+
+L.Marker.prototype.options.icon = DefaultIcon;
   const handleLogout = () => {
     localStorage.removeItem('token');
     window.location.href = '/login';
@@ -115,30 +128,51 @@ const Dashboard = () => {
   const fetchLatestLocation = async (boardID) => {
     try {
       const response = await axios.get(`http://localhost:4000/api/telemetry/location/${userEmail}/${boardID}`);
+  
       if (response.data && response.data.length > 0) {
         const { events } = response.data[0];
         const { value, when } = events;
-
-        const latitudeMatch = value.match(/Latitude:\s*(-?\d+\.\d+)/);
-        const longitudeMatch = value.match(/Longitude:\s*(-?\d+\.\d+)/);
-
+  
+        // Check for DMM or DD format
+        const latitudeMatch = value.match(/Latitude:\s*(-?\d+\.\d+),\s*(N|S)?/);
+        const longitudeMatch = value.match(/Longitude:\s*(-?\d+\.\d+),\s*(E|W)?/);
+  
         if (latitudeMatch && longitudeMatch) {
-          let latitude = parseFloat(latitudeMatch[1]) / 100;
-          let longitude = parseFloat(longitudeMatch[1]) / 100;
-
-          if (value.includes('W')) longitude = -Math.abs(longitude);
-          if (value.includes('S')) latitude = -Math.abs(latitude);
-
+          let rawLatitude = parseFloat(latitudeMatch[1]);
+          let rawLongitude = parseFloat(longitudeMatch[1]);
+          let latitude, longitude;
+  
+          // Determine if it's DMM or DD
+          if (Math.abs(rawLatitude) > 90 || Math.abs(rawLongitude) > 180) {
+            // DMM format: Convert to DD
+            latitude = Math.floor(rawLatitude / 100) + (rawLatitude % 100) / 60;
+            longitude = Math.floor(rawLongitude / 100) + (rawLongitude % 100) / 60;
+          } else {
+            // DD format: Use as is
+            latitude = rawLatitude;
+            longitude = rawLongitude;
+          }
+  
+          // Adjust for directions (N/S, E/W)
+          if (latitudeMatch[2] === 'S') latitude = -Math.abs(latitude);
+          if (longitudeMatch[2] === 'W') longitude = -Math.abs(longitude);
+  
           setLatestLocation({
             position: [latitude, longitude],
             popupContent: `Última ubicación registrada en: ${when}`
           });
+  
+          console.log('Parsed location:', { latitude, longitude });
+        } else {
+          console.error('Could not parse latitude and longitude from value:', value);
         }
       }
     } catch (error) {
       console.error('Error fetching latest location:', error);
     }
   };
+  
+  
 
   const fetchBatteryStatus = async (boardID) => {
     try {

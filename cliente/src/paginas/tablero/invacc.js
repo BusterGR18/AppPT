@@ -1,20 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa'; 
 import { jwtDecode } from 'jwt-decode';
-import { Container, Nav, Navbar, Table, Button, Dropdown, Modal, Form,NavDropdown } from 'react-bootstrap';
+import { Container, Nav, Navbar, Table, Button, Dropdown, Modal, NavDropdown } from 'react-bootstrap';
 import axios from 'axios';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker} from 'react-leaflet';
 import L from 'leaflet';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
 const HistorialAInvitado = () => {
   const [accidents, setAccidents] = useState([]);
   const [userEmail, setUserEmail] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedAccident, setSelectedAccident] = useState(null);
-  const [currentUserEmail, setCurrentUserEmail] = useState(null);
-  const [showMapModal, setShowMapModal] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+
+  const [showContactsModal, setShowContactsModal] = useState(false); // For Contacts Modal
+const [showMapModal, setShowMapModal] = useState(false);           // For Map Modal
+const [selectedContacts, setSelectedContacts] = useState([]);      // Selected contacts to display
+const [mapLocation, setMapLocation] = useState([0, 0]);            // For Map Location
+const [guestAccidents, setGuestAccidents] = useState([]);          // Data for the table
+const DefaultIcon = L.icon({
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -31,6 +44,15 @@ const HistorialAInvitado = () => {
     const decodedToken = jwtDecode(token);
     setUserEmail(decodedToken.email);
   }, []);
+
+  const handleShowContacts = (contacts) => {
+    setSelectedContacts(contacts);
+    setShowContactsModal(true);
+  };
+  
+
+
+  
 
   useEffect(() => {
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
@@ -50,6 +72,7 @@ const HistorialAInvitado = () => {
             `http://localhost:4000/api/accidents/guest-accident-history?email=${userEmail}`
           );
           setAccidents(response.data);
+          setGuestAccidents(response.data); 
         } catch (error) {
           console.error('Error fetching guest accident history:', error);
         }
@@ -59,9 +82,46 @@ const HistorialAInvitado = () => {
     }
   }, [userEmail]);
 
-  const handleShowMap = (location) => {
-    // Implement Leaflet Map Modal logic here
+  const handleShowMap = (locationValue) => {
+    const coords = parseLocationValue(locationValue); // Ensure you reuse the location parser.
+    if (coords) {
+      setMapLocation(coords);
+      setShowMapModal(true);
+    } else {
+      alert("Invalid location data");
+    }
   };
+  
+  const parseLocationValue = (locationValue) => {
+    try {
+      console.log('Parsing location value:', locationValue);
+      const regex = /Latitude:\s*([\d.]+),([NS]),\s*Longitude:\s*([\d.]+),([EW])/;
+      const match = locationValue.match(regex);
+  
+      if (!match) {
+        console.error('Regex failed to match location format:', locationValue);
+        throw new Error('Invalid location format');
+      }
+  
+      let [_, lat, latDir, lon, lonDir] = match;
+      lat = parseFloat(lat);
+      lon = parseFloat(lon);
+  
+      if (latDir === 'S') lat = -lat;
+      if (lonDir === 'W') lon = -lon;
+  
+      console.log('Parsed coordinates:', { lat, lon });
+      return { lat, lon };
+    } catch (error) {
+      console.error('Error parsing location:', error);
+      throw new Error('Invalid coordinates');
+    }
+  };
+  
+
+  
+
+  
 
   return (
     <div>
@@ -95,37 +155,70 @@ const HistorialAInvitado = () => {
       <Container className={`mt-5 ${isDarkMode ? 'container-dark' : 'container'}`}>
       <h1>Historial de Accidentes de Invitados</h1>
       <Table striped bordered hover variant={isDarkMode ? 'dark' : 'light'}>
-        <thead>
-          <tr>
-            <th>Perfil Invitado</th>
-            <th>Board ID</th>
-            <th>Tipo de Accidente</th>
-            <th>Fecha y Hora</th>
-            <th>Ubicación</th>
-            <th>Contactos Notificados</th>
-          </tr>
-        </thead>
-        <tbody>
-          {accidents.map((accident) => (
-            <tr key={accident._id}>
-              <td>{accident.guestProfileId.name}</td>
-              <td>{accident.guestProfileId.boardID}</td>
-              <td>{accident.accidentType}</td>
-              <td>{new Date(accident.timeOfAccident).toLocaleString()}</td>
-              <td>
-                <Button variant="link" onClick={() => handleShowMap(accident.location.value)}>
-                  Ver en Mapa
-                </Button>
-              </td>
-              <td>
-                {accident.notifiedContacts.map((contact) => (
-                  <p key={contact._id}>{`${contact.alias} (${contact.number})`}</p>
-                ))}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+  <thead>
+    <tr>
+      <th>Tipo de Accidente</th>
+      <th>Fecha y Hora</th>
+      <th>Mapa</th>
+      <th>Contactos Notificados</th>
+    </tr>
+  </thead>
+  <tbody>
+    {guestAccidents.map((accident) => (
+      <tr key={accident._id}>
+        <td>{accident.accidentType}</td>
+        <td>{new Date(accident.timeOfAccident).toLocaleString()}</td>
+        <td>
+          <Button variant="link" onClick={() => handleShowMap(accident.location.value)}>
+            Ver en Mapa
+          </Button>
+        </td>
+        <td>
+          <Button variant="info" onClick={() => handleShowContacts(accident.notifiedContacts)}>
+            Ver Contactos
+          </Button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</Table>
+
+
+<Modal show={showContactsModal} onHide={() => setShowContactsModal(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Contactos Notificados</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {selectedContacts && selectedContacts.length > 0 ? (
+      <ul>
+        {selectedContacts.map((contact) => (
+          <li key={contact._id}>
+            {contact.alias}: {contact.number}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No hay contactos notificados.</p>
+    )}
+  </Modal.Body>
+</Modal>
+
+<Modal show={showMapModal} onHide={() => setShowMapModal(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Ubicación del Accidente</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <MapContainer center={mapLocation} zoom={13} style={{ height: "400px" }}>
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+      <Marker position={mapLocation}></Marker>
+    </MapContainer>
+  </Modal.Body>
+</Modal>
+
+
       </Container>
     </div>
   );

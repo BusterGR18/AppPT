@@ -42,6 +42,7 @@ app.use(bodyParser.json());
 require('./config/database').connect();
 //Accident listener
 require('./extras/accidentlistener'); 
+require('./extras/userIncidentsListener');
 
 // Route importing and mounting
 const contactRoutes = require('./routes/contactRoutes');
@@ -70,9 +71,17 @@ app.use('/api/historical-data', historicalDataRouter);
 app.use('/api/accidents', accidentRoutes);
 
 
+const notificationRoutes = require('./routes/notificationRoutes');
+const userIncidentRoutes = require('./routes/userIncidentRoutes');
+
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/notifications/user', userIncidentRoutes);
+
+
 //app.use('/api/accidents', accidentRoutes);
 
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
+
