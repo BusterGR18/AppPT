@@ -76,13 +76,14 @@ exports.notifyUser = async (userId, notificationType, details) => {
 };
 
 */
-//V2
+//V1 
+// (Actually functional notification service)
 const { Vonage } = require('@vonage/server-sdk');
 const Accident = require('../models/Accident');
 
 const vonageInstance = new Vonage({
-  apiKey: 'YOUR_API_KEY',
-  apiSecret: 'YOUR_API_SECRET',
+  apiKey: 'd1eb8683',
+  apiSecret: 'RALjCmCx90Tm4DUm',
 });
 
 const NotificationService = {
@@ -93,18 +94,24 @@ const NotificationService = {
     try {
       const { notifiedContacts, location, accidentType, timeOfAccident } = accident;
 
+      // Map each contact to a notification promise
       const promises = notifiedContacts.map(async (contact) => {
-        const message = `Alert: ${accidentType} reported at ${location.value} on ${new Date(
+        const text = `Alert: ${accidentType} reported at ${location.value} on ${new Date(
           timeOfAccident
         ).toLocaleString()}. Please check immediately.`;
 
-        // Send SMS to the contact
-        await vonageInstance.message.sendSms('System', contact.number, message);
+        // Use Vonage's new promise-based API to send SMS
+        await vonageInstance.sms.send({
+          to: contact.number,
+          from: 'System',
+          text,
+        });
 
         console.log(`Notification sent to ${contact.alias}: ${contact.number}`);
         return { alias: contact.alias, number: contact.number, status: 'sent' };
       });
 
+      // Wait for all notifications to complete
       const results = await Promise.all(promises);
       return results;
     } catch (error) {
@@ -116,7 +123,7 @@ const NotificationService = {
   /**
    * Notify user for an incident (e.g., bike fall, low battery).
    */
-  sendUserNotification: async ({ userEmail, notificationType, details }) => {
+  sendUserNotification: async ({ userNumber, notificationType, details }) => {
     try {
       const messages = {
         lowBattery: `Alert: Your bike's battery is low. ${details}`,
@@ -124,16 +131,20 @@ const NotificationService = {
         test: `Test notification: ${details}`,
       };
 
-      const message = messages[notificationType];
-      if (!message) {
+      const text = messages[notificationType];
+      if (!text) {
         throw new Error(`Unknown notification type: ${notificationType}`);
       }
 
-      // Use Vonage or another SMS service to send the notification
-      await vonageInstance.message.sendSms('System', userEmail, message);
+      // Use Vonage's new promise-based API to send SMS
+      await vonageInstance.sms.send({
+        to: userNumber,
+        from: 'System',
+        text,
+      });
 
-      console.log(`Notification sent: ${message}`);
-      return { status: 'success', message };
+      console.log(`Notification sent: ${text}`);
+      return { status: 'success', message: text };
     } catch (error) {
       console.error('Error sending notification:', error);
       throw error;

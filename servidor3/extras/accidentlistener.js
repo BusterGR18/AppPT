@@ -241,6 +241,7 @@ const User = require('../models/user');
 const GuestProfile = require('../models/GuestProfile');
 const UserSettings = require('../models/UserSettings');
 const Contact = require('../models/Contact');
+const axios = require('axios');
 
 const MQTT_BROKER = "c4527dc1a0d9425f8b451446a7ebca7f.s1.eu.hivemq.cloud";
 const MQTT_PORT = 8883;
@@ -347,6 +348,9 @@ client.on('message', async (topic, message) => {
     console.log('Accident saved successfully:', newAccident);
 
     // TODO: Call the notification API here if needed
+    await axios.post(`http://localhost:4000/api/notifications/${newAccident._id}`);
+    console.log('Notification API triggered for accident:', newAccident._id);
+
   } catch (error) {
     console.error('Error processing MQTT message:', error);
   }
