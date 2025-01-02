@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-
+const userController = require('../controllers/userController');
 //Handlers from controllers
 const {login, signup, sendotp} = require("../controllers/auth")
 const {auth, isClient, isAdmin} = require('../middlewares/authMiddle')
@@ -40,4 +40,10 @@ router.get('/admin', auth, isAdmin, (req,res)=>{
     })
 })
 
+
+
+// Update user information
+router.put('/users/update', auth, isClient, userController.updateUserDetails);
+// Get user info
+router.get('/users/details', auth, isClient, userController.getUserDetails);
 module.exports = router

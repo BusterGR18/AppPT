@@ -32,6 +32,9 @@ const Configuracion = () => {
   const [contacts, setContacts] = useState([]);
   const [excludedContacts, setExcludedContacts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [userDetails, setUserDetails] = useState(null); 
+  const [isEditingUserDetails, setIsEditingUserDetails] = useState(false); // State to toggle edit mode
+
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -210,6 +213,26 @@ const Configuracion = () => {
     //console.log('Excluded Contacts on Page Load:', excludedContacts);
   }, [excludedContacts]);
   
+
+
+  //For editing userdetails
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/v1/users/details', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Use token for authentication
+          },
+        });
+        setUserDetails(response.data.user); // Set user details in state
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+  
+    fetchUserDetails();
+  }, []);
+
 
   useEffect(() => {
     if (settings.enableGuestMode) {
@@ -431,9 +454,98 @@ const Configuracion = () => {
     {isLoading ? 'Guardando...' : 'Guarda tus cambios'}
   </Button>
 </Tab.Pane>
+
 <Tab.Pane eventKey="AccMNGMT">
-<h2>Cuenta</h2>
+  <h2>Cuenta</h2>
+  <Form>
+    <Form.Group controlId="name">
+      <Form.Label>Nombre</Form.Label>
+      <Form.Control
+        type="text"
+        placeholder="Tu nombre"
+        value={userDetails?.name || ""}
+        readOnly={!isEditingUserDetails} // Toggle read-only mode
+        onChange={(e) => setUserDetails({ ...userDetails, name: e.target.value })}
+      />
+    </Form.Group>
+    <Form.Group controlId="email">
+      <Form.Label>Email</Form.Label>
+      <Form.Control
+        type="email"
+        placeholder="Tu email"
+        value={userDetails?.email || ""}
+        readOnly={!isEditingUserDetails} // Toggle read-only mode
+        onChange={(e) => setUserDetails({ ...userDetails, email: e.target.value })}
+      />
+    </Form.Group>
+    <Form.Group controlId="numtel">
+      <Form.Label>Teléfono</Form.Label>
+      <Form.Control
+        type="text"
+        placeholder="Tu número de teléfono"
+        value={userDetails?.numtel || ""}
+        readOnly={!isEditingUserDetails} // Toggle read-only mode
+        onChange={(e) => setUserDetails({ ...userDetails, numtel: e.target.value })}
+      />
+    </Form.Group>
+    <Form.Group controlId="tiposangre">
+  <Form.Label>Tipo de Sangre</Form.Label>
+  <Form.Control
+    as="select"
+    value={userDetails?.tiposangre || ""}
+    disabled={!isEditingUserDetails} // Disable dropdown if not editing
+    onChange={(e) => setUserDetails({ ...userDetails, tiposangre: e.target.value })}
+  >
+    <option value="">Selecciona tu tipo de sangre</option>
+    <option value="A+">A+</option>
+    <option value="A-">A-</option>
+    <option value="B+">B+</option>
+    <option value="B-">B-</option>
+    <option value="AB+">AB+</option>
+    <option value="AB-">AB-</option>
+    <option value="O+">O+</option>
+    <option value="O-">O-</option>
+  </Form.Control>
+</Form.Group>
+    {isEditingUserDetails ? (
+      <Button
+        variant="primary"
+        onClick={async () => {
+          try {
+            const response = await axios.put(
+              `http://localhost:4000/api/v1/users/update?useremail=${userEmail}`,
+              {
+                name: userDetails?.name,
+                email: userDetails?.email,
+                numtel: userDetails?.numtel,
+                tiposangre: userDetails?.tiposangre,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+              }
+            );
+            alert("Información actualizada exitosamente.");
+            setIsEditingUserDetails(false); // Exit edit mode after successful update
+          } catch (error) {
+            console.error("Error updating user details:", error);
+            alert("Error actualizando información.");
+          }
+        }}
+      >
+        Guardar Cambios
+      </Button>
+    ) : (
+      <Button variant="secondary" onClick={() => setIsEditingUserDetails(true)}>
+        Editar
+      </Button>
+    )}
+  </Form>
 </Tab.Pane>
+
+
+
 
               </Tab.Content>
             </Col>
