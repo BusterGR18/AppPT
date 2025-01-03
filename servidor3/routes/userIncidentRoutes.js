@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const userIncidentController = require('../controllers/userIncidentController');
 
-// Route for handling user incidents
-router.post('/user', userIncidentController.handleUserIncidentNotification);
+router.post('/', userIncidentController.createIncident);
+router.get('/', userIncidentController.getIncidents); 
+router.get('/count', userIncidentController.getIncidentCount);
+router.get('/guest-incident-history', userIncidentController.getGuestIncidentHistory);
 
 module.exports = router;
