@@ -22,6 +22,11 @@ const incidentSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  guestProfileId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'GuestProfile',
+      default: null,
+    },
   phoneNumber: {
     type: String,
     required: true,

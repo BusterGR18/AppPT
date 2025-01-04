@@ -1,5 +1,6 @@
 const NotificationService = require('../services/notificationService');
 const Accident = require('../models/Accident');
+const Incident = require('../models/Incident');
 
 exports.triggerNotifications = async (req, res) => {
   const { accidentId } = req.params;
@@ -51,3 +52,31 @@ exports.handleStatusUpdate = async (req, res) => {
     res.status(500).send('Failed to process status update');
   }
 };
+
+
+
+exports.triggerIncidentNotifications = async (req, res) => {
+  const { incidentId } = req.params;
+
+  if (!incidentId) {
+    return res.status(400).json({ error: 'Incident ID is required.' });
+  }
+
+  try {
+    // Fetch the incident and populate user details
+    const incident = await Incident.findById(incidentId).populate('user');
+    if (!incident) {
+      return res.status(404).json({ error: 'Incident not found.' });
+    }
+
+    console.log('Fetched incident:', incident); // Debugging
+
+    const result = await NotificationService.notifyUserForIncident(incident);
+    res.status(200).json({ message: 'Incident notification sent successfully.', result });
+  } catch (error) {
+    console.error('Error triggering incident notification:', error);
+    res.status(500).json({ error: 'Failed to send incident notification.' });
+  }
+};
+
+

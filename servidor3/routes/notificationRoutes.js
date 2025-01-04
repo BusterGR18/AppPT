@@ -9,4 +9,5 @@ router.post('/inbound', notificationController.handleInboundMessage);
 // New route for status updates from Vonage
 router.post('/status', notificationController.handleStatusUpdate);
 
+router.post('/incidents/:incidentId', notificationController.triggerIncidentNotifications);
 module.exports = router;
