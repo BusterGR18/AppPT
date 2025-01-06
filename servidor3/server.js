@@ -55,6 +55,7 @@ const guestProfilesRouter = require('./routes/guestProfiles');
 const statisticsRoutes = require('./routes/statisticsRoutes');
 const historicalDataRouter = require('./routes/historicalDataRouter');
 const accidentRoutes = require('./routes/accidentRoutes');
+const boardRoutes = require('./routes/boardRoutes');
 
 //Additional functionalities
 
@@ -69,7 +70,7 @@ app.use('/api/guest-profiles', guestProfilesRouter);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/historical-data', historicalDataRouter);
 app.use('/api/accidents', accidentRoutes);
-
+app.use('/api/boards', boardRoutes);
 
 const notificationRoutes = require('./routes/notificationRoutes');
 const userIncidentRoutes = require('./routes/userIncidentRoutes');
@@ -85,3 +86,7 @@ app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
 
+app.use((req, res, next) => {
+  console.log(`Request URL: ${req.url}, Method: ${req.method}`);
+  next();
+});

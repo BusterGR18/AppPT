@@ -1,34 +1,5 @@
-/*import logo from './logo.svg';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload. a mamarre
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-
-export default App;
-
-*/
-
-
 import React from 'react'
-import {BrowserRouter, Route} from 'react-router-dom'
+import {BrowserRouter, Route, Switch, Link } from 'react-router-dom'
 import Inicio from './paginas/start/Home.js'
 import Login from './paginas/paginasusuario/Login.js'
 import Signup from './paginas/paginasusuario/Signup.js'
@@ -54,52 +25,40 @@ import AdminTelemetry from './paginas/adminpages/admintelemtry.js'
 import Invitados from './paginas/tablero/invitados.js'
 import ReporteAccidentes from './paginas/tablero/accidentes.js'
 import AccidentesInvitados from './paginas/tablero/invacc.js'
-
-
-const NavbarPrincipal = () => (
-  <Navbar bg="light" expand="lg" fixed="top">
-        <Container>
-          <Navbar.Brand href="/">SiNoMoto</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ml-auto">
-              <Nav.Link href="/inicio">Inicio</Nav.Link>
-              <Nav.Link href="/inicio">Si ves esto es por que falta un navbar</Nav.Link>              
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-  
-);
+import AdminModulos from './paginas/tablero/modulosmgmt.js'
+import NotFound from './paginas/Notf.js';
+import NavbarPrincipal from './paginas/Notf.js'
 
 const App = () => {
-  return <div className="App">        
+  return <div className="App">            
     
-    <NavbarPrincipal/>
-    <BrowserRouter>        
-        <Route path="/login" exact component={Login}/>
-        <Route path="/signup" exact component={Signup} />
-        <Route path="/inicio" exact component={Inicio} />
-        <Route path="/" exact component={Inicio} />      
-        <Route path="/rescont" exact component={Respass} />
-        <Route path="/acercade" exact component={AcercaDe} /> 
-        <Route path="/modfis" exact component={ModFis} />  
-        <Route path="/dash" exact component={Dashboard} />      
-        <Route path="/contactos" exact component={Contactos} />      
-        <Route path="/rutas" exact component={Rutas} />     
-        <Route path="/viewrutas" exact component={ViewRutas} /> 
-        <Route path="/deleterutas" exact component={DeleteRutas} /> 
-        <Route path="/registerruta" exact component={RegisterRuta} />
-        <Route path="/estadisticas" exact component={Estadisticas}/>
-        <Route path="/configuracion" exact component={Configuracion}/>
-        <Route path="/historial" exact component={HistorialAE}/>
-        <Route path="/configinvitados" exact component={Invitados}/>
-        <Route path="/accidentes" exact component={ReporteAccidentes}/>
-        <Route path="/accidentes-invitados" exact component={AccidentesInvitados}/>
-        <ProtectedRoute path="/admindash" exact component={AdminDash} />
-        <ProtectedRoute path="/adminusers" exact component={AdminUsers} />
-        <ProtectedRoute path="/adminsettings" exact component={AdminSettings} />
-        <ProtectedRoute path="/admintelemetry" exact component={AdminTelemetry} />
+    <BrowserRouter> 
+      <Switch>                 
+          <Route path="/login" exact component={Login}/>
+          <Route path="/signup" exact component={Signup} />          
+          <Route path="/" exact component={Inicio} />      
+          <Route path="/rescont" exact component={Respass} />
+          <Route path="/acercade" exact component={AcercaDe} /> 
+          <Route path="/modfis" exact component={ModFis} />  
+          <Route path="/dash" exact component={Dashboard} />      
+          <Route path="/contactos" exact component={Contactos} />      
+          <Route path="/rutas" exact component={Rutas} />     
+          <Route path="/viewrutas" exact component={ViewRutas} /> 
+          <Route path="/deleterutas" exact component={DeleteRutas} /> 
+          <Route path="/registerruta" exact component={RegisterRuta} />
+          <Route path="/estadisticas" exact component={Estadisticas}/>
+          <Route path="/configuracion" exact component={Configuracion}/>
+          <Route path="/historial" exact component={HistorialAE}/>
+          <Route path="/configinvitados" exact component={Invitados}/>
+          <Route path="/accidentes" exact component={ReporteAccidentes}/>
+          <Route path="/accidentes-invitados" exact component={AccidentesInvitados}/>
+          <Route path="/modulos" exact component={AdminModulos}/>
+          <ProtectedRoute path="/admindash" exact component={AdminDash} />
+          <ProtectedRoute path="/adminusers" exact component={AdminUsers} />
+          <ProtectedRoute path="/adminsettings" exact component={AdminSettings} />
+          <ProtectedRoute path="/admintelemetry" exact component={AdminTelemetry} />
+          <Route path="*" component={NotFound} />
+      </Switch>  
     </BrowserRouter>
   </div>
 }
