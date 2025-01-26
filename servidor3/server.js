@@ -1,4 +1,5 @@
 //V2
+const logger = require('./extras/logger');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -10,7 +11,7 @@ const historicalDataController = require('./controllers/historicalDataController
 
 // Schedule the cron job to run daily at 00:00 GMT-6
 const scheduledTask = cron.schedule('0 0 * * *', async () => {
-  console.log('Running scheduled statistics update...');
+  logger.info('Running scheduled statistics update...');
   await updateStatistics();
   historicalDataController.saveDailySnapshot();
 }, {
@@ -19,7 +20,7 @@ const scheduledTask = cron.schedule('0 0 * * *', async () => {
 
 // Start the scheduled task (optional, as `cron.schedule` starts it by default)
 scheduledTask.start();
-console.log('Cron job scheduled to update statistics daily at 00:00 GMT-6');
+logger.info('Cron job scheduled to update statistics daily at 00:00 GMT-6');
 
 require('dotenv').config();
 const PORT = process.env.PORT || 4000;
@@ -43,6 +44,8 @@ require('./config/database').connect();
 //Accident listener
 require('./extras/accidentlistener'); 
 require('./extras/userIncidentsListener');
+const { initTelemetryListener } = require('./extras/telemetryListener'); // Adjust the path as needed
+initTelemetryListener();
 
 // Route importing and mounting
 const contactRoutes = require('./routes/contactRoutes');
@@ -56,7 +59,9 @@ const statisticsRoutes = require('./routes/statisticsRoutes');
 const historicalDataRouter = require('./routes/historicalDataRouter');
 const accidentRoutes = require('./routes/accidentRoutes');
 const boardRoutes = require('./routes/boardRoutes');
-
+//Admin side apis
+const adminRoutes= require('./routes/adminRoutes');
+const adminsettingsRoutes= require('./routes/adminsettingsRoutes');
 //Additional functionalities
 
 //endpoints definition
@@ -74,19 +79,29 @@ app.use('/api/boards', boardRoutes);
 
 const notificationRoutes = require('./routes/notificationRoutes');
 const userIncidentRoutes = require('./routes/userIncidentRoutes');
+const checkNotifications = require('./middlewares/checkNotifications');
 
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/notifications/user', userIncidentRoutes);
 
 
+//admin related apis
+app.use('/api/admin', adminRoutes);
+app.use('/api/admin/settings', adminsettingsRoutes);
+
+const checkMaintenance = require('./middlewares/checkMaintenance');
+app.use(checkMaintenance);
+
 //app.use('/api/accidents', accidentRoutes);
 
 
 app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
+    //console.log(`Server started on port ${PORT}`);
+    logger.info(`Server started on port ${PORT}`);
 });
 
 app.use((req, res, next) => {
-  console.log(`Request URL: ${req.url}, Method: ${req.method}`);
+  //console.log(`Request URL: ${req.url}, Method: ${req.method}`);
+  logger.info(`Request URL: ${req.url}, Method: ${req.method}`);
   next();
 });

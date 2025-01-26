@@ -3,7 +3,7 @@ import { FaUserCircle } from 'react-icons/fa';
 import { jwtDecode } from 'jwt-decode';
 import { Container, Nav, Navbar, Table, Button, Dropdown, Modal, NavDropdown } from 'react-bootstrap';
 import axios from 'axios';
-import { MapContainer, TileLayer, Marker} from 'react-leaflet';
+import { MapContainer, TileLayer, Marker  } from 'react-leaflet';
 import L from 'leaflet';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';

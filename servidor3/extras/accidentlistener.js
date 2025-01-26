@@ -234,7 +234,8 @@
   
   module.exports = client;
 */
-  //V3
+//V3
+const logger = require('./logger');
 const mqtt = require('mqtt');
 const Accident = require('../models/Accident');
 const User = require('../models/user');
@@ -283,12 +284,12 @@ const processAccidentNotification = async (email) => {
 const client = mqtt.connect(`mqtts://${MQTT_BROKER}`, options);
 
 client.on('connect', () => {
-  console.log(`Connected to MQTT broker at ${MQTT_BROKER}:${MQTT_PORT}`);
+  logger.info(`[Accident] Connected to MQTT broker at ${MQTT_BROKER}:${MQTT_PORT}`);
   client.subscribe(MQTT_TOPIC, (err) => {
     if (err) {
       console.error(`Error subscribing to topic ${MQTT_TOPIC}:`, err);
     } else {
-      console.log(`Subscribed to topic ${MQTT_TOPIC}`);
+      logger.info(`[Accident] Subscribed to topic ${MQTT_TOPIC}`);
     }
   });
 });
