@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Link } from 'react';
 import { Navbar, Container, Nav, NavDropdown, Dropdown, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
 import axios from 'axios';
@@ -195,7 +195,7 @@ const AdminModulos = ({  handleLogout, settings }) => {
           <td>{board.mode}</td>
           <td>
             <Button variant="warning" onClick={() => openModal('edit', board)} className="me-2">Editar</Button>
-            <Button variant="danger" onClick={() => handleDelete(board.boardId)}>Eliminar</Button>
+            <Button variant="danger" onClick={() => handleDelete(board.boardId)}>Eliminar</Button>                        
           </td>
         </tr>
       ))

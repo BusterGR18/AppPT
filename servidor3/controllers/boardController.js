@@ -125,4 +125,59 @@ exports.deleteBoard = async (req, res) => {
     }
   };
   
-  
+
+//GeoType
+const GeoType = require('../models/GeoType');
+
+// Assign GeoType to a board
+exports.assignGeoTypeToBoard = async (req, res) => {
+  try {
+    const { boardId, geoTypeId } = req.body;
+
+    const board = await Board.findById(boardId);
+    if (!board) return res.status(404).json({ message: 'Board not found' });
+
+    if (!board.geoTypes.includes(geoTypeId)) {
+      board.geoTypes.push(geoTypeId);
+      await board.save();
+    }
+
+    res.status(200).json({ message: 'GeoType assigned to board', board });
+  } catch (error) {
+    console.error('Error assigning GeoType to board:', error);
+    res.status(500).json({ message: 'Error assigning GeoType to board', error });
+  }
+};
+
+// Remove GeoType from a board
+exports.removeGeoTypeFromBoard = async (req, res) => {
+  try {
+    const { boardId, geoTypeId } = req.body;
+
+    const board = await Board.findById(boardId);
+    if (!board) return res.status(404).json({ message: 'Board not found' });
+
+    board.geoTypes = board.geoTypes.filter((id) => id.toString() !== geoTypeId);
+    await board.save();
+
+    res.status(200).json({ message: 'GeoType removed from board', board });
+  } catch (error) {
+    console.error('Error removing GeoType from board:', error);
+    res.status(500).json({ message: 'Error removing GeoType from board', error });
+  }
+};
+
+// Fetch GeoTypes for a specific board
+exports.getGeoTypesForBoard = async (req, res) => {
+  try {
+    const { boardId } = req.params;
+
+    const board = await Board.findById(boardId).populate('geoTypes');
+    if (!board) return res.status(404).json({ message: 'Board not found' });
+
+    res.status(200).json(board.geoTypes);
+  } catch (error) {
+    console.error('Error fetching GeoTypes for board:', error);
+    res.status(500).json({ message: 'Error fetching GeoTypes for board', error });
+  }
+};

@@ -28,6 +28,7 @@ import AdminModulos from './paginas/tablero/modulosmgmt.js'
 import NotFound from './paginas/Notf.js';
 import MaintenanceBanner from './paginas/MaintenanceBanner.js'
 //import NavbarPrincipal from './paginas/Notf.js'
+import GeoTypeBoardConfig from './paginas/tablero/GeoTypeBoardConfig.js'
 
 const App = () => {
   return <div className="App">            
@@ -54,6 +55,7 @@ const App = () => {
           <Route path="/accidentes" exact component={ReporteAccidentes}/>
           <Route path="/accidentes-invitados" exact component={AccidentesInvitados}/>
           <Route path="/modulos" exact component={AdminModulos}/>
+          <Route path="/geojsonmodulos" exact component={GeoTypeBoardConfig}/>
           <ProtectedRoute path="/admindash" exact component={AdminDash} />
           <ProtectedRoute path="/adminusers" exact component={AdminUsers} />
           <ProtectedRoute path="/adminsettings" exact component={AdminSettings} />

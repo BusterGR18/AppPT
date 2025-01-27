@@ -92,8 +92,44 @@ app.use('/api/admin/settings', adminsettingsRoutes);
 const checkMaintenance = require('./middlewares/checkMaintenance');
 app.use(checkMaintenance);
 
-//app.use('/api/accidents', accidentRoutes);
+const { publishAllGeoTypeData } = require('./extras/geoTypePublisher');
+// Schedule publishing all GeoType data every hour
+cron.schedule('0 * * * *', () => {
+  logger.info('[GeoJSON]Running scheduled GeoType publish...');
+  publishAllGeoTypeData();
+});
+//const { watchGeoTypeChanges } = require('./extras/geoTypeChangeListener');
 
+//Start watching for GeoType changes
+//watchGeoTypeChanges();
+
+//const { publishAllGeoTypeData } = require('./extras/geoTypePublisher');
+
+// Temporary route for testing GeoType publishing
+app.get('/test-publish-geoTypes', async (req, res) => {
+  try {
+    console.log('Manually triggering GeoType publishing...');
+    await publishAllGeoTypeData(); // Trigger the publishing
+    res.status(200).json({ message: 'GeoTypes published successfully.' });
+  } catch (error) {
+    console.error('Error publishing GeoTypes:', error);
+    res.status(500).json({ message: 'Error publishing GeoTypes', error });
+  }
+});
+
+const { publishGeoTypeForUser } = require('./extras/geoTypePublisher');
+
+// Add a test route to trigger publishing for a specific user
+app.get('/api/test/publish-geoType/:userEmail', async (req, res) => {
+  const { userEmail } = req.params;
+  try {
+    await publishGeoTypeForUser(userEmail);
+    res.status(200).send(`GeoType data for ${userEmail} published to MQTT.`);
+  } catch (error) {
+    console.error(`Error publishing GeoType data for ${userEmail}:`, error);
+    res.status(500).send('Error publishing GeoType data.');
+  }
+});
 
 app.listen(PORT, () => {
     //console.log(`Server started on port ${PORT}`);
