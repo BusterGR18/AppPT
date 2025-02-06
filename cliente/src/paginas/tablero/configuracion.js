@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { FaUserCircle } from 'react-icons/fa';
+import { FaUserCircle, FaMicrochip,FaMapMarkedAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { Container, Nav, Navbar, Tab, Row, Col, Button, NavDropdown, Form,  Dropdown ,Table} from 'react-bootstrap';
 
@@ -421,6 +421,30 @@ const Configuracion = () => {
     </div>
   )}
 </Tab.Pane>
+
+<Tab.Pane eventKey="ModMgmt">
+  <h2>Ajustes para módulos</h2>
+
+  <Row className="mt-3">
+    <Col md={6}>
+      <Link to="/modulos">
+        <Button variant="info" className="w-100">
+          <FaMicrochip /> Gestionar tus módulos
+        </Button>
+      </Link>
+    </Col>
+
+    <Col md={6}>
+      <Link to="/geojsonmodulos">
+        <Button variant="info" className="w-100">
+          <FaMapMarkedAlt /> Administrar Geocercos para los módulos
+        </Button>
+      </Link>
+    </Col>
+  </Row>
+
+</Tab.Pane>
+
 <Tab.Pane eventKey="ContSett">
   <h2>Contactos</h2>
   <h2>Excluye Contactos de las notificaciones</h2>
@@ -543,10 +567,6 @@ const Configuracion = () => {
     )}
   </Form>
 </Tab.Pane>
-
-
-
-
               </Tab.Content>
             </Col>
           </Row>

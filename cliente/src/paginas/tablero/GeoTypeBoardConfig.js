@@ -124,6 +124,43 @@ const GeoTypeBoardConfig = () => {
     }
   };
 
+  //Add and remove all
+  const handleAssignAllGeoTypes = async (boardId) => {
+    try {
+      const geoTypeIds = geoTypes.map((geoType) => geoType._id);
+      await axios.post('http://localhost:4000/api/boards/assignGeoType', {
+        boardId,
+        geoTypeIds, // Send all GeoType IDs
+      });
+      if (selectedBoard?._id === boardId) {
+        setAssignedGeoTypes(geoTypeIds); // Update state if the modal is open
+      }
+      alert('Todos los GeoTypes han sido asignados exitosamente.');
+    } catch (error) {
+      console.error('Error assigning all GeoTypes:', error);
+      alert('Ocurrió un error al asignar todos los GeoTypes.');
+    }
+  };
+  
+  const handleRemoveAllGeoTypes = async (boardId) => {
+    try {
+      const geoTypeIds = geoTypes.map((geoType) => geoType._id);
+      await axios.post('http://localhost:4000/api/boards/removeGeoType', {
+        boardId,
+        geoTypeIds, // Send an array now
+      });
+      if (selectedBoard?._id === boardId) {
+        setAssignedGeoTypes([]); // Clear state
+      }
+      alert('Todos los GeoTypes han sido removidos exitosamente.');
+    } catch (error) {
+      console.error('Error removing all GeoTypes:', error);
+      alert('Ocurrió un error al remover todos los GeoTypes.');
+    }
+  };
+  
+  
+
   // Open modal to configure GeoTypes for a specific board
   const handleShowModal = async (board) => {
     setSelectedBoard(board);
@@ -188,18 +225,31 @@ const GeoTypeBoardConfig = () => {
             </tr>
           </thead>
           <tbody>
-            {boards.map((board) => (
-              <tr key={board._id}>
-                <td>{board.name}</td>
-                <td>{board.mode}</td>
-                <td>
-                  <Button variant="info" onClick={() => handleShowModal(board)}>
-                    Configurar Geocercos
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+  {boards.map((board) => (
+    <tr key={board._id}>
+      <td>{board.name}</td>
+      <td>{board.mode}</td>
+      <td>
+        <Button variant="info" onClick={() => handleShowModal(board)}>
+          Configurar GeoTypes
+        </Button>{' '}
+        <Button
+          variant="success"
+          onClick={() => handleAssignAllGeoTypes(board._id)}
+        >
+          Asignar Todos
+        </Button>{' '}
+        <Button
+          variant="danger"
+          onClick={() => handleRemoveAllGeoTypes(board._id)}
+        >
+          Remover Todos
+        </Button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </Table>
       )}
 

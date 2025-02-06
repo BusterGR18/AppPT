@@ -64,21 +64,35 @@ const Estadisticas = () => {
     }
   };
 
+  const calculateStartDate = () => {
+    const ranges = {
+      '7d': 7,
+      '30d': 30,
+      '3m': 90,
+      '1y': 365,
+    };
+    return new Date(Date.now() - (ranges[dateRange] || 7) * 24 * 60 * 60 * 1000).toISOString();
+  };
+  
+
   const fetchHistoricalData = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/historical-data`, {
+      const response = await axios.get('http://localhost:4000/api/historical-data', {
         params: {
           userEmail,
           boardId: selectedBoard,
-          startDate: new Date(Date.now() - parseInt(dateRange) * 24 * 60 * 60 * 1000).toISOString(),
+          startDate: calculateStartDate(),
           endDate: new Date().toISOString(),
         },
       });
+      console.log('Historical Data Response:', response.data);
       setHistoricalData(response.data);
     } catch (error) {
-      console.error("Error fetching historical data:", error);
+      console.error('Error fetching historical data:', error);
     }
   };
+  
+  
 
   useEffect(() => {
     const token = localStorage.getItem('token');
