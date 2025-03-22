@@ -24,7 +24,7 @@ const ReporteAccidentes = () => {
   // Fetch accident data from the backend
   const fetchAccidents = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/accidents?email=${currentUserEmail}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/accidents?email=${currentUserEmail}`);
       
 
       const filteredAccidents = response.data.filter((accident) => !accident.isGuestMode);

@@ -1,4 +1,6 @@
 //V2
+// Calling Database function
+require('./config/database').connect();
 const logger = require('./extras/logger');
 const express = require('express');
 const cors = require('cors');
@@ -39,13 +41,22 @@ app.options('*', cors(corsOptions));
 
 app.use(bodyParser.json());
 
-// Calling Database function
-require('./config/database').connect();
+
 //Accident listener
+
+const { fork } = require('child_process');
+
+// Keep requiring synchronous listeners
 require('./extras/accidentlistener'); 
 require('./extras/userIncidentsListener');
-const { initTelemetryListener } = require('./extras/telemetryListener'); // Adjust the path as needed
-initTelemetryListener();
+
+// Start Telemetry Listener as a separate process
+const { initTelemetryListener } = require('./extras/telemetryListener');
+initTelemetryListener(); 
+
+// Start Ride Tracking Listener as a separate process
+fork('./extras/rideTracker.js'); // NEW
+
 
 // Route importing and mounting
 const contactRoutes = require('./routes/contactRoutes');
@@ -77,9 +88,15 @@ app.use('/api/historical-data', historicalDataRouter);
 app.use('/api/accidents', accidentRoutes);
 app.use('/api/boards', boardRoutes);
 
+
+// Rides endpoints
+const rideRoutes = require('./routes/ridesRoutes');
+app.use('/api/rides', rideRoutes);
+
 const notificationRoutes = require('./routes/notificationRoutes');
 const userIncidentRoutes = require('./routes/userIncidentRoutes');
 const checkNotifications = require('./middlewares/checkNotifications');
+app.use(checkNotifications);
 
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/notifications/user', userIncidentRoutes);
@@ -99,11 +116,8 @@ cron.schedule('0 * * * *', () => {
   publishAllGeoTypeData();
 });
 //const { watchGeoTypeChanges } = require('./extras/geoTypeChangeListener');
-
 //Start watching for GeoType changes
 //watchGeoTypeChanges();
-
-//const { publishAllGeoTypeData } = require('./extras/geoTypePublisher');
 
 // Temporary route for testing GeoType publishing
 app.get('/test-publish-geoTypes', async (req, res) => {
@@ -131,7 +145,7 @@ app.get('/api/test/publish-geoType/:userEmail', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     //console.log(`Server started on port ${PORT}`);
     logger.info(`Server started on port ${PORT}`);
 });

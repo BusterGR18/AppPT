@@ -80,7 +80,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
     const fetchBoardIDs = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/telemetry/boardIDs/${decodedToken.email}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/telemetry/boardIDs/${decodedToken.email}`);
         setBoardIDs(response.data);
       } catch (error) {
         console.error('Error fetching board IDs:', error);
@@ -93,7 +93,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
   useEffect(() => {
     const fetchUserSettings = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/settings/?useremail=${userEmail}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/?useremail=${userEmail}`);
         setSettings(response.data);
         if (response.data.enableGuestMode && response.data.selectedGuestProfile) {
           fetchGuestProfile(response.data.selectedGuestProfile);
@@ -110,7 +110,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
   const fetchGuestProfile = async (profileId) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/guest-profiles/${profileId}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/guest-profiles/${profileId}`);
       setGuestProfile(response.data);
       if (response.data.boardID) {
         fetchTelemetryData(response.data.boardID);
@@ -127,7 +127,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
   const fetchLatestLocation = async (boardID) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/telemetry/location/${userEmail}/${boardID}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/telemetry/location/${userEmail}/${boardID}`);
   
       if (response.data && response.data.length > 0) {
         const { events } = response.data[0];
@@ -176,7 +176,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
   const fetchBatteryStatus = async (boardID) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/telemetry/battery/${userEmail}/${boardID}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/telemetry/battery/${userEmail}/${boardID}`);
       if (response.data && response.data.length > 0) {
         const batteryValue = response.data[0].events.value;
         const percentage = batteryValue.split(':')[1].trim();
@@ -195,7 +195,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
   
       try {
         const response = await axios.get(
-          `http://localhost:4000/api/accidents/count?boardId=${selectedBoardID}&isGuestMode=${settings?.enableGuestMode}`
+          `${process.env.REACT_APP_API_URL}/api/accidents/count?boardId=${selectedBoardID}&isGuestMode=${settings?.enableGuestMode}`
         );
         setAccidentCountForBoard(response.data.count);
       } catch (error) {
@@ -217,7 +217,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
   useEffect(() => {
     const fetchContactCount = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/contacts/?useremail=${userEmail}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/contacts/?useremail=${userEmail}`);
         if (response.data) {
           setContactCount(response.data.length);
         }

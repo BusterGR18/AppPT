@@ -10,7 +10,10 @@ const deviceRoot = "board1/tele/#";
 const username = encodeURIComponent("gusAdmin");
 const password = encodeURIComponent("cacas1");
 const authMechanism = "DEFAULT";
-const uri = `mongodb://localhost:27017/`;
+//TEST
+//const uri = `mongodb://localhost:27017/`;
+//Docker
+ const uri = `mongodb://mongo:27017/`;
 let client;
 let collection;
 
@@ -23,7 +26,7 @@ async function initTelemetryListener() {
         //console.log("[Telemetry] Connected to MongoDB");
 
         // Access specific database and collection
-        const database = mongoClient.db("authv1");
+        const database = mongoClient.db("Proyecto_Terminal");
         collection = database.collection("telemetry");
 
         // Initialize MQTT client
@@ -76,11 +79,12 @@ function handleMessage(topic, message) {
                 if (eventData.useremail) document.useremail = eventData.useremail;
                 if (eventData.boardid) document.boardid = eventData.boardid;
                 if (eventData.events && eventData.events.length > 0) {
-                    const event = {
-                        type,
-                        value: eventData.events[0].value,
-                        when: new Date(eventData.events[0].when)
-                    };
+                    const rawWhen = eventData.events[0].when;
+const event = {
+    type,
+    value: eventData.events[0].value,
+    when: rawWhen ? new Date(rawWhen) : new Date()
+};
                     document.events.push(event);
                     console.log(`[Telemetry] ${type} event added:`, event);
                 }

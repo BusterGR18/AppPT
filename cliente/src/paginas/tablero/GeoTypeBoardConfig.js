@@ -84,8 +84,8 @@ const GeoTypeBoardConfig = () => {
         console.error('User ID not available');
         return;
       }
-        const boardsResponse = await axios.get(`http://localhost:4000/api/boards/${userId}`); // Replace with your boards API
-        const geoTypesResponse = await axios.get(`http://localhost:4000/api/geojson/?useremail=${useremail}`); // Replace with your geoTypes API
+        const boardsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/boards/${userId}`); // Replace with your boards API
+        const geoTypesResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/geojson/?useremail=${useremail}`); // Replace with your geoTypes API
         setBoards(boardsResponse.data.boards);
         setGeoTypes(geoTypesResponse.data);
       } catch (error) {
@@ -101,7 +101,7 @@ const GeoTypeBoardConfig = () => {
   // Handle assigning a GeoType to a board
   const handleAssignGeoType = async (geoTypeId) => {
     try {
-      await axios.post('http://localhost:4000/api/boards/assignGeoType', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/boards/assignGeoType`, {
         boardId: selectedBoard._id,
         geoTypeId,
       });
@@ -114,7 +114,7 @@ const GeoTypeBoardConfig = () => {
   // Handle removing a GeoType from a board
   const handleRemoveGeoType = async (geoTypeId) => {
     try {
-      await axios.post('http://localhost:4000/api/boards/removeGeoType', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/boards/removeGeoType`, {
         boardId: selectedBoard._id,
         geoTypeId,
       });
@@ -128,7 +128,7 @@ const GeoTypeBoardConfig = () => {
   const handleAssignAllGeoTypes = async (boardId) => {
     try {
       const geoTypeIds = geoTypes.map((geoType) => geoType._id);
-      await axios.post('http://localhost:4000/api/boards/assignGeoType', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/boards/assignGeoType`, {
         boardId,
         geoTypeIds, // Send all GeoType IDs
       });
@@ -145,7 +145,7 @@ const GeoTypeBoardConfig = () => {
   const handleRemoveAllGeoTypes = async (boardId) => {
     try {
       const geoTypeIds = geoTypes.map((geoType) => geoType._id);
-      await axios.post('http://localhost:4000/api/boards/removeGeoType', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/boards/removeGeoType`, {
         boardId,
         geoTypeIds, // Send an array now
       });
@@ -165,7 +165,7 @@ const GeoTypeBoardConfig = () => {
   const handleShowModal = async (board) => {
     setSelectedBoard(board);
     try {
-      const response = await axios.get(`http://localhost:4000/api/boards/${board._id}/geoTypes`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/boards/${board._id}/geoTypes`);
       setAssignedGeoTypes(response.data.map((geoType) => geoType._id));
     } catch (error) {
       console.error('Error fetching assigned GeoTypes:', error);

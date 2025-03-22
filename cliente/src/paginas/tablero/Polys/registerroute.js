@@ -33,8 +33,8 @@ const RegisterRuta = () => {
   }, []);
 
   const fetchSettings = async (email) => {
-    try {
-      const response = await axios.get(`http://localhost:4000/api/settings/?useremail=${email}`);
+    try {      
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/?useremail=${email}`);
       setSettings(response.data);
     } catch (error) {
       console.error('Error fetching user settings:', error);
@@ -49,7 +49,8 @@ const RegisterRuta = () => {
     const bufferedGeojson = turf.buffer(geojson, 5, { units: 'meters' });
   
     try {
-      await axios.post('http://localhost:4000/api/geojson', { geojsonData: bufferedGeojson, useremail: userEmail });
+      
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/geojson`, { geojsonData: bufferedGeojson, useremail: userEmail });
       console.log('GeoJSON data saved successfully');
     } catch (error) {
       console.error('Error saving GeoJSON data:', error);

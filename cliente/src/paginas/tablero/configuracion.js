@@ -48,7 +48,7 @@ const Configuracion = () => {
   
     try {
       //const token = localStorage.getItem('token');
-      await axios.post(`http://localhost:4000/api/settings/?useremail=${userEmail}`, updatedSettings);
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/settings/?useremail=${userEmail}`, updatedSettings);
       console.log(`Settings updated: ${name} is now ${checked}`);
     } catch (error) {
       console.error('Error updating settings:', error);
@@ -71,7 +71,7 @@ const Configuracion = () => {
   const handleSaveSettings = async () => {
     try {
       //const token = localStorage.getItem('token');
-      await axios.post(`http://localhost:4000/api/settings/?useremail=${userEmail}`, settings);
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/settings/?useremail=${userEmail}`, settings);
       alert("Settings saved successfully!");
     } catch (error) {
       console.error('Error saving settings:', error);
@@ -88,7 +88,7 @@ const Configuracion = () => {
   
     try {
       //const token = localStorage.getItem('token');
-      await axios.post(`http://localhost:4000/api/settings/?useremail=${userEmail}`, updatedSettings);
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/settings/?useremail=${userEmail}`, updatedSettings);
       console.log(`Guest profile selected: ${selectedProfileId}`);
     } catch (error) {
       console.error('Error saving selected guest profile:', error);
@@ -115,7 +115,7 @@ const Configuracion = () => {
   const saveExcludedContacts = async () => {
     setIsLoading(true);
     try {
-      await axios.post('http://localhost:4000/api/settings/updateExcludedContacts', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/settings/updateExcludedContacts`, {
         useremail: userEmail, // Change to lowercase `useremail` to match the backend
         excludedContactIds: excludedContacts, // Adjust the key to `excludedContactIds`
       });            
@@ -166,7 +166,7 @@ const Configuracion = () => {
 
       const fetchAvailableStatistics = async () => {
         try {
-          const response = await axios.get('http://localhost:4000/api/statistics/available');
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/statistics/available`);
           setAvailableStatistics(response.data);
         } catch (error) {
           console.error("Error fetching available statistics:", error);
@@ -174,7 +174,7 @@ const Configuracion = () => {
       };
       const fetchSettings = async () => {
         try {
-          const response = await axios.get(`http://localhost:4000/api/settings/?useremail=${userEmail}`);
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/?useremail=${userEmail}`);
           setSettings(response.data);
           setSelectedGuestProfile(response.data.selectedGuestProfile || "");
         } catch (error) {
@@ -185,11 +185,11 @@ const Configuracion = () => {
       const fetchContactsAndExcluded = async () => {
         try {
           // Fetch all contacts
-          const contactsResponse = await axios.get(`http://localhost:4000/api/contacts/?useremail=${userEmail}`);
+          const contactsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/contacts/?useremail=${userEmail}`);
           setContacts(contactsResponse.data);
       
           // Fetch settings including excluded contacts
-          const settingsResponse = await axios.get(`http://localhost:4000/api/settings/?useremail=${userEmail}`);
+          const settingsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/?useremail=${userEmail}`);
           //console.log('Settings Response:', settingsResponse.data); // Debugging log
           
           const excludedContactIds = settingsResponse.data.excludedContacts || [];
@@ -219,7 +219,7 @@ const Configuracion = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/api/v1/users/details', {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/details`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`, // Use token for authentication
           },
@@ -238,7 +238,7 @@ const Configuracion = () => {
     if (settings.enableGuestMode) {
       const fetchGuestProfiles = async () => {
         try {
-          const response = await axios.get(`http://localhost:4000/api/guest-profiles/?useremail=${userEmail}`);
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/guest-profiles/?useremail=${userEmail}`);
           setGuestProfiles(response.data);
         } catch (error) {
           console.error('Error fetching guest profiles:', error);
@@ -537,7 +537,7 @@ const Configuracion = () => {
         onClick={async () => {
           try {
             const response = await axios.put(
-              `http://localhost:4000/api/v1/users/update?useremail=${userEmail}`,
+              `${process.env.REACT_APP_API_URL}/api/v1/users/update?useremail=${userEmail}`,
               {
                 name: userDetails?.name,
                 email: userDetails?.email,

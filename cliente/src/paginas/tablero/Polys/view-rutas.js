@@ -39,7 +39,7 @@ const ViewRutas = () => {
 
   const fetchSavedPolygons = async (userEmail) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/geojson/?useremail=${userEmail}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/geojson/?useremail=${userEmail}`);
       setSavedPolygons(response.data);
     } catch (error) {
       console.error('Error fetching saved polygons:', error);
@@ -48,7 +48,7 @@ const ViewRutas = () => {
 
   const fetchSettings = async (userEmail) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/settings/?useremail=${userEmail}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/?useremail=${userEmail}`);
       setSettings(response.data);
     } catch (error) {
       console.error('Error fetching user settings:', error);

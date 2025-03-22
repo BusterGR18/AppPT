@@ -52,7 +52,7 @@ const Estadisticas = () => {
 
   const fetchStatisticsData = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/statistics/user?useremail=${userEmail}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/statistics/user?useremail=${userEmail}`);
       setStatisticsData(response.data);
 
       const board = response.data.boards.find((b) => b.boardid === selectedBoard);
@@ -77,7 +77,7 @@ const Estadisticas = () => {
 
   const fetchHistoricalData = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/api/historical-data', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/historical-data`, {
         params: {
           userEmail,
           boardId: selectedBoard,
@@ -108,7 +108,7 @@ const Estadisticas = () => {
     if (userEmail) {
       const fetchSettings = async () => {
         try {
-          const response = await axios.get(`http://localhost:4000/api/settings/?useremail=${userEmail}`);
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/?useremail=${userEmail}`);
           setSettings(response.data);
           if (response.data.enableStatistics) fetchStatisticsData();
         } catch (error) {

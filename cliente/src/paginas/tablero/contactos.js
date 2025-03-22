@@ -52,7 +52,7 @@ const Contactos = () => {
 
   const fetchSettings = async (email) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/settings/?useremail=${email}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/?useremail=${email}`);
       setSettings(response.data);
       if (!response.data.enableGuestMode) {
         fetchContacts(email);
@@ -64,7 +64,7 @@ const Contactos = () => {
 
   const fetchContacts = async (userEmail) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/contacts/?useremail=${userEmail}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/contacts/?useremail=${userEmail}`);
       setContacts(response.data);
     } catch (error) {
       console.error('Error fetching contacts:', error);
@@ -74,7 +74,7 @@ const Contactos = () => {
   const handleAddContact = async () => {
     try {
       const newContact = { alias: contactName, number: contactNumber, useremail: userEmail };
-      const response = await axios.post('http://localhost:4000/api/contacts', newContact);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/contacts`, newContact);
       setContacts([...contacts, response.data]);
       setContactName('');
       setContactNumber('');
@@ -85,7 +85,7 @@ const Contactos = () => {
 
   const handleDeleteContact = async (id) => {
     try {
-      await axios.delete(`http://localhost:4000/api/contacts/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/contacts/${id}`);
       setContacts(contacts.filter((contact) => contact._id !== id));
     } catch (error) {
       console.error('Error deleting contact:', error);
@@ -101,7 +101,7 @@ const Contactos = () => {
   const handleUpdateContact = async () => {
     try {
       const updatedContact = { alias: contactName, number: contactNumber };
-      const response = await axios.put(`http://localhost:4000/api/contacts/${editingContact._id}`, updatedContact);
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/contacts/${editingContact._id}`, updatedContact);
       setContacts(contacts.map(contact => contact._id === editingContact._id ? response.data : contact));
       setEditingContact(null);
       setContactName('');

@@ -52,7 +52,7 @@ const Rutas = () => {
   
     try {
       // Send GeoJSON data along with user email to backend API
-      await axios.post('http://localhost:4000/api/geojson', { geojsonData: bufferedGeojson, useremail: userEmail });
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/geojson`, { geojsonData: bufferedGeojson, useremail: userEmail });
       console.log('GeoJSON data saved successfully');
     } catch (error) {
       console.error('Error saving GeoJSON data:', error);

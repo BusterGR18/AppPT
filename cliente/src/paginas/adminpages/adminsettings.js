@@ -44,7 +44,7 @@ const AdminSettings = () => {
     useEffect(() => {
       const fetchSettings = async () => {
         try {
-          const response = await axios.get('http://localhost:4000/api/admin/settings');
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/settings`);
           setBlockNotifications(response.data.blockNotifications);
           setMaintenanceMode(response.data.maintenanceMode);
         } catch (error) {
@@ -57,7 +57,7 @@ const AdminSettings = () => {
 
     const handleSaveSettings = async () => {
       try {
-        const response = await axios.post('http://localhost:4000/api/admin/settings', {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/admin/settings`, {
           blockNotifications,
           maintenanceMode,
         });
@@ -71,7 +71,7 @@ const AdminSettings = () => {
 
   const handleUpdateStatistics = async () => {
     try {
-      const response = await axios.post('http://localhost:4000/api/statistics/update');      
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/statistics/update`);      
       setStatusMessage({ type: 'success', text: 'Estadisticas actualizdas exitosamente!' });
       console.log(response);
     } catch (error) {

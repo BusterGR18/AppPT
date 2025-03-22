@@ -31,7 +31,7 @@ const Invitados = () => {
     try {
       const token = localStorage.getItem('token');
       const decodedToken = jwtDecode(token);
-      const response = await axios.get(`http://localhost:4000/api/telemetry/boardIDs/${decodedToken.email}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/capi/telemetry/boardIDs/${decodedToken.email}`);
       setBoardIDs(response.data);
     } catch (error) {
       console.error('Error fetching board IDs:', error);
@@ -40,7 +40,7 @@ const Invitados = () => {
 
   const fetchGuestProfiles = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/api/guest-profiles');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/guest-profiles`);
       setGuestProfiles(response.data);
     } catch (error) {
       console.error('Error fetching guest profiles:', error);
@@ -82,9 +82,9 @@ const Invitados = () => {
       };
   
       if (isEditing) {
-        await axios.put(`http://localhost:4000/api/guest-profiles/${profileData._id}`, profilePayload);
+        await axios.put(`${process.env.REACT_APP_API_URL}/api/guest-profiles/${profileData._id}`, profilePayload);
       } else {
-        await axios.post('http://localhost:4000/api/guest-profiles', profilePayload);
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/guest-profiles`, profilePayload);
       }
       fetchGuestProfiles();
       handleCloseModal();
@@ -100,7 +100,7 @@ const Invitados = () => {
 
   const handleDeleteProfile = async (id) => {
     try {
-      await axios.delete(`http://localhost:4000/api/guest-profiles/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/guest-profiles/${id}`);
       fetchGuestProfiles();
     } catch (error) {
       console.error('Error deleting profile:', error);

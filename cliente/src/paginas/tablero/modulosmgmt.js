@@ -72,7 +72,7 @@ const AdminModulos = ({  handleLogout, settings }) => {
         console.error('User ID not available');
         return;
       }
-      const response = await axios.get(`http://localhost:4000/api/boards/${userId}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/boards/${userId}`);
       setBoards(response.data.boards); // Populate the boards state
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -105,9 +105,9 @@ const AdminModulos = ({  handleLogout, settings }) => {
       const data = { ...formData, userId }; // Include userId in the request
   
       if (modalType === 'add') {
-        await axios.post('http://localhost:4000/api/boards/create', data);
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/boards/create`, data);
       } else if (modalType === 'edit') {
-        await axios.put(`http://localhost:4000/api/boards/update/${currentBoard.boardId}`, formData);
+        await axios.put(`${process.env.REACT_APP_API_URL}/api/boards/update/${currentBoard.boardId}`, formData);
       }
       fetchBoards();
       setShowModal(false);
@@ -119,7 +119,7 @@ const AdminModulos = ({  handleLogout, settings }) => {
 
   const handleDelete = async (boardId) => {
     try {
-      await axios.delete(`http://localhost:4000/api/boards/delete/${boardId}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/boards/delete/${boardId}`);
       fetchBoards();
     } catch (error) {
       console.error('Error deleting board:', error);
