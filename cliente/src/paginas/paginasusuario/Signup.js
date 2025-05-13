@@ -90,17 +90,21 @@ function Signup() {
     }
 
     return (
-      <><Navbar className={isDarkMode ? 'navbar-dark-mode' : 'navbar-light'} expand="lg" fixed="top">
-        <Container>
-          <Navbar.Brand href="/">SiNoMoto</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ml-auto">
-              <Nav.Link href="/login">Iniciar Sesion</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar><Container className="mt-5">
+      <><Navbar expand="lg" bg="dark" variant="dark" className="w-100" style={{ padding: 0 }}>
+              <Container fluid className="px-3 d-flex justify-content-between align-items-center">
+                <Navbar.Brand href="/" className="fw-bold fs-4 m-0">SiNoMoto</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                  <Nav className="ms-auto">
+                    <Nav.Link href="/modfis">Módulo</Nav.Link>
+                    <Nav.Link href="/acercade">Nosotros</Nav.Link>
+                    <Nav.Link href="/signup">Registrarse</Nav.Link>
+                    <Nav.Link href="/login">Iniciar Sesión</Nav.Link>
+                  </Nav>
+                </Navbar.Collapse>
+              </Container>
+            </Navbar>
+      <Container className="mt-5">
           <Row className="justify-content-center">
             <Col md={6}>
               <h1 className="text-center">Registro</h1>

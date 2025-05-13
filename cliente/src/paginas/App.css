@@ -36,3 +36,19 @@
     transform: rotate(360deg);
   }
 }
+
+/* Fix background for collapsed navbar */
+.navbar-collapse {
+  background-color: #212529; /* Match dark navbar bg */
+  z-index: 1000;
+  padding: 1rem;
+  border-radius: 0 0 10px 10px;
+}
+
+.navbar-light .navbar-collapse {
+  background-color: #f8f9fa; /* Light background */
+}
+
+.navbar-dark-mode .navbar-collapse {
+  background-color: #212529; /* Dark background */
+}

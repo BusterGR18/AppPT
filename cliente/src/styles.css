@@ -604,3 +604,72 @@ body.dark-mode {
   background-color: #121212; /* A very dark color for dark mode */
   color: #ffffff; /* Ensure text is white or light */
 }
+/* Remove default spacing */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove unwanted navbar styling */
+.navbar {
+  box-shadow: none !important;
+  border-bottom: none !important;
+  margin-bottom: 0 !important;
+}
+
+/* Fix brand and toggle alignment */
+.navbar-brand {
+  margin-right: auto;
+}
+.navbar-toggler {
+  margin-left: auto;
+}
+
+/* Remove margin override from bg-dark */
+.bg-dark {
+  margin-top: 0 !important;
+}
+
+/* Responsive mobile navbar collapse */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 1rem;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+
+  .navbar-dark .navbar-collapse {
+    background-color: #212529; /* dark mode */
+    color: white;
+  }
+
+  .navbar-light .navbar-collapse {
+    background-color: #f8f9fa; /* light mode */
+    color: black;
+  }
+
+  /* Dropdown background in mobile */
+  .navbar .dropdown-menu {
+    background-color: inherit;
+    color: inherit;
+    border: none;
+  }
+}
+
+/* Nav link colors per mode */
+.navbar-dark .navbar-collapse .nav-link {
+  color: #fff !important;
+}
+.navbar-light .navbar-collapse .nav-link {
+  color: #000 !important;
+}
+
+/* Light mode hover effect */
+.navbar-light .nav-link:hover {
+  color: #007bff;
+}

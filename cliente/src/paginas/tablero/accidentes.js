@@ -144,34 +144,50 @@ const ReporteAccidentes = () => {
   });
 
   return (
-    <div>
-      <Navbar className={isDarkMode ? 'navbar-dark-mode' : 'navbar-light'} expand="lg" fixed="top">
-        <Container className="navbar-container">
-          <Navbar.Brand href="/">SiNoMoto</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ml-auto">
-              <Nav.Link href='/dash'>Inicio</Nav.Link>
-              <Nav.Link href='/contactos'>Contactos</Nav.Link>
-              <NavDropdown title="Rutas" id="basic-nav-dropdown">
-                <NavDropdown.Item href="/registerruta">Registrar Nueva Ruta</NavDropdown.Item>
-                <NavDropdown.Item href="/viewrutas">Visualizar Rutas Existentes</NavDropdown.Item>
-                <NavDropdown.Item href="/deleterutas">Eliminar Rutas</NavDropdown.Item>
-              </NavDropdown>
-              <Nav.Link href='/estadisticas'>Estadisticas</Nav.Link>
-              <Nav.Link href='/configuracion'>Configuración</Nav.Link>
-              <Dropdown className="profile-dropdown" align="items-end">
-                <Dropdown.Toggle variant="link" id="profile-dropdown">
-                  <FaUserCircle size={24} color="#fff" />
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item onClick={handleLogout}>Cerrar Sesión</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>  
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+    <div style={{ paddingTop: '64px' }}>
+    <Navbar
+      expand="lg"
+      fixed="top"
+      className={`w-100 mb-3 ${isDarkMode ? 'navbar-dark bg-dark' : 'navbar-light bg-light'}`}
+      style={{ padding: 0 }}
+    >
+      <Container fluid className="px-3 d-flex justify-content-between align-items-center">
+        <Navbar.Brand href="/" className="fw-bold fs-4 m-0">SiNoMoto</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        
+        <Navbar.Collapse
+          id="basic-navbar-nav"
+          className={isDarkMode ? 'bg-dark text-light' : 'bg-light text-dark'}
+        >
+          <Nav className="ms-auto align-items-center text-center text-lg-start">
+            <Nav.Link href="/dash">Inicio</Nav.Link>
+            <Nav.Link href="/contactos">Contactos</Nav.Link>
+    
+            <NavDropdown title="Rutas" id="basic-nav-dropdown">
+              <NavDropdown.Item href="/registerruta">Registrar Nueva Ruta</NavDropdown.Item>
+              <NavDropdown.Item href="/viewrutas">Visualizar Rutas Existentes</NavDropdown.Item>
+              <NavDropdown.Item href="/deleterutas">Eliminar Rutas</NavDropdown.Item>
+            </NavDropdown>
+    
+            <Nav.Link href="/estadisticas">Estadísticas</Nav.Link>
+            <Nav.Link href="/configuracion">Configuración</Nav.Link>
+    
+            <Dropdown align="end">
+              <Dropdown.Toggle variant="link" id="profile-dropdown" className="d-flex align-items-center px-2">
+                <FaUserCircle size={24} color={isDarkMode ? "#fff" : "#000"} />
+              </Dropdown.Toggle>
+    
+              <Dropdown.Menu
+                align="end"
+                className={isDarkMode ? 'bg-dark text-light' : 'bg-light text-dark'}
+              >
+                <Dropdown.Item onClick={handleLogout}>Cerrar Sesión</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
 
       <Container className={`mt-5 ${isDarkMode ? 'container-dark' : 'container'}`}>
         <h1>Reporte de Accidentes</h1>

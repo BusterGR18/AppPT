@@ -140,16 +140,19 @@ const ProductDetails = () => {
     <>
       {/* Navbar */}
       <Navbar
-        className={isDarkMode ? 'navbar-dark-mode' : 'navbar-light'}
         expand="lg"
         fixed="top"
-        variant={isDarkMode ? 'dark' : 'light'}
-        bg={isDarkMode ? 'dark' : 'light'}
+        className={`w-100 ${isDarkMode ? 'navbar-dark bg-dark' : 'navbar-light bg-light'}`}
+        style={{ padding: 0 }}
       >
-        <Container>
-          <Navbar.Brand href="/" className="fw-bold fs-4">SiNoMoto</Navbar.Brand>
+      
+        <Container fluid className="px-3 d-flex justify-content-between align-items-center">
+          <Navbar.Brand href="/" className="fw-bold fs-4 m-0">SiNoMoto</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
+          <Navbar.Collapse
+        id="basic-navbar-nav"
+        className={isDarkMode ? 'bg-dark text-light' : 'bg-light text-dark'}
+      >
             <Nav className="ms-auto">
               <Nav.Link href="/modfis">Módulo</Nav.Link>
               <Nav.Link href="/acercade">Nosotros</Nav.Link>
@@ -160,12 +163,19 @@ const ProductDetails = () => {
         </Container>
       </Navbar>
 
+
       {/* Hero Section */}
-      <Container fluid className="mt-5 pt-5 text-center bg-dark p-5 rounded">
+      <div style={{ paddingTop: '64px' }}>
+        <Container
+          fluid
+          className={`text-center p-4 rounded shadow-sm ${
+            isDarkMode ? 'bg-dark text-light' : 'bg-light text-dark'
+          }`}
+        >
         <h1 className="display-4 fw-bold">Protección Total para Tu Motocicleta</h1>
         <p className="lead">Tecnología inteligente que actúa cuando tú no puedes</p>
         <Button variant="primary" size="lg">Ver Detalles</Button>
-      </Container>
+      </Container></div>
 
       {/* Product Details */}
       <Container className="mt-5">

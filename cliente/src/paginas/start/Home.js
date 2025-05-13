@@ -1,118 +1,3 @@
-// import React, { useEffect,useState } from 'react';
-// import { Container, Row, Col, Button, Navbar, Nav } from 'react-bootstrap';
-
-// const Inicio = () => {
-//   const [isDarkMode, setIsDarkMode] = useState(false);
-
-//   useEffect(() => {
-//     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-
-//     if (prefersDarkScheme.matches) {
-//       document.body.classList.add('dark-mode');
-//       setIsDarkMode(true);
-//     } else {
-//       document.body.classList.remove('dark-mode');
-//       setIsDarkMode(false);
-//     }
-
-//     const handleDarkModeChange = (e) => {
-//       if (e.matches) {
-//         document.body.classList.add('dark-mode');
-//         setIsDarkMode(true);
-//       } else {
-//         document.body.classList.remove('dark-mode');
-//         setIsDarkMode(false);
-//       }
-//     };
-
-//     prefersDarkScheme.addEventListener('change', handleDarkModeChange);
-
-//     return () => {
-//       prefersDarkScheme.removeEventListener('change', handleDarkModeChange);
-//     };
-//   }, []);
-//   return (
-//     <>
-//       <Navbar className={isDarkMode ? 'navbar-dark-mode' : 'navbar-light'} expand="lg" fixed="top">
-//         <Container>
-//           <Navbar.Brand href="/">SiNoMoto</Navbar.Brand>
-//           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-//           <Navbar.Collapse id="basic-navbar-nav">
-//             <Nav className="ml-auto">
-//               <Nav.Link href="/modfis">Modulo</Nav.Link>
-//               <Nav.Link href="/acercade">Acerca de Nosotros</Nav.Link>
-//               <Nav.Link href="/signup">Registrarse</Nav.Link>
-//               <Nav.Link href="/login">Iniciar Sesion</Nav.Link>
-//             </Nav>
-//           </Navbar.Collapse>
-//         </Container>
-//       </Navbar>
-
-//       <Container className="mt-5">
-//         <Row className="justify-content-center">
-//           <Col md={8} className="text-center">
-//             <h1>Gracias por visitar SiNoMoto</h1>
-//             <p className="lead">
-//               SiNoMoto es un prototipo de un sistema de notificación en caso de accidentes para motocicletas
-//             </p>
-//           </Col>
-//         </Row>
-
-//         <Row className="mt-5">
-//           <Col md={6}>
-//             <img
-//               src="https://via.placeholder.com/600x400"
-//               alt="Product Showcase"
-//               className="img-fluid rounded"
-//             />
-//           </Col>
-//           <Col md={6}>
-//             <h2>Modulo Fisico</h2>
-//             <p>
-//               Conoce más acerca de nuestro modulo fisico y como interactua con tu motocicleta
-//             </p>
-//             <Button variant="primary" href="/modfis">
-//               Learn More
-//             </Button>
-//           </Col>
-//         </Row>
-
-//         <Row className="mt-5">
-//           <Col className="text-center">
-//             <h2>Quienes somos?</h2>
-//             <p>
-//               Conoce nuestros objetivos con este prototipo
-//             </p>
-//             <Button variant="outline-primary" href="/acercade">
-//               Acerca de nosotros
-//             </Button>
-//           </Col>
-//         </Row>
-
-//         <Row className="mt-5">
-//           <Col className="text-center">
-//             <h2>Cuentas con un modulo fisico?</h2>
-//             <p>
-//               Continua con el proceso registrandote a continuación
-//             </p>
-//             <Button variant="success" href="/signup">
-//               Registrarse
-//             </Button>
-//           </Col>
-//         </Row>
-//       </Container>
-
-//       <footer className={isDarkMode ? 'footer-dark-mode' : 'footer-light'}>
-//       <Container>
-//         <p className="footer-text">© 2025 SiNoMoto. PT2</p>
-//       </Container>
-//     </footer>
-//     </>
-//   );
-// };
-
-// export default Inicio;
-
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Button, Navbar, Nav, Card } from 'react-bootstrap';
 
@@ -137,33 +22,54 @@ const Inicio = () => {
   return (
     <>
       {/* Navbar */}
-      <Navbar
-        className={isDarkMode ? 'navbar-dark-mode' : 'navbar-light'}
-        expand="lg"
-        fixed="top"
-        variant={isDarkMode ? 'dark' : 'light'}
-        bg={isDarkMode ? 'dark' : 'light'}
-      >
-        <Container>
-          <Navbar.Brand href="/" className="fw-bold fs-4">SiNoMoto</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
-              <Nav.Link href="/modfis">Módulo</Nav.Link>
-              <Nav.Link href="/acercade">Nosotros</Nav.Link>
-              <Nav.Link href="/signup">Registrarse</Nav.Link>
-              <Nav.Link href="/login">Iniciar Sesión</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+    <Navbar
+  expand="lg"
+  fixed="top"
+  className={`w-100 ${isDarkMode ? 'navbar-dark bg-dark' : 'navbar-light bg-light'}`}
+  style={{ padding: 0 }}
+>
 
-      {/* Hero Section */}
-      <Container fluid className="mt-5 pt-5 text-center bg-dark p-5 rounded shadow-sm">
-        <h1 className="display-5 fw-bold">Bienvenido a SiNoMoto</h1>
-        <p className="lead">Un sistema inteligente de notificación ante accidentes para motocicletas.</p>
-        <Button variant="primary" size="lg" href="/signup">Comenzar</Button>
-      </Container>
+  <Container fluid className="px-3 d-flex justify-content-between align-items-center">
+    <Navbar.Brand href="/" className="fw-bold fs-4 m-0">SiNoMoto</Navbar.Brand>
+    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+    <Navbar.Collapse
+  id="basic-navbar-nav"
+  className={isDarkMode ? 'bg-dark text-light' : 'bg-light text-dark'}
+>
+      <Nav className="ms-auto">
+        <Nav.Link href="/modfis">Módulo</Nav.Link>
+        <Nav.Link href="/acercade">Nosotros</Nav.Link>
+        <Nav.Link href="/signup">Registrarse</Nav.Link>
+        <Nav.Link href="/login">Iniciar Sesión</Nav.Link>
+      </Nav>
+    </Navbar.Collapse>
+  </Container>
+</Navbar>
+
+
+
+
+
+
+
+
+
+      <div style={{ paddingTop: '64px' }}>
+  <Container
+    fluid
+    className={`text-center p-4 rounded shadow-sm ${
+      isDarkMode ? 'bg-dark text-light' : 'bg-light text-dark'
+    }`}
+  >
+    <h1 className="display-5 fw-bold">Bienvenido a SiNoMoto</h1>
+    <p className="lead">Un sistema inteligente de notificación ante accidentes para motocicletas.</p>
+    <Button variant="primary" size="lg" href="/signup">
+      Comenzar
+    </Button>
+  </Container>
+</div>
+
+
 
       {/* Feature Sections */}
       <Container className="mt-5">
