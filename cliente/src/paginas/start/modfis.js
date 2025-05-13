@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+/*import React, { useEffect,useState } from 'react';
 import { Container, Row, Col, Button, Navbar, Nav } from 'react-bootstrap';
 
 const ProductDetails = () => {
@@ -53,7 +53,7 @@ const ProductDetails = () => {
         <Col md={8} className="text-center">
           <h1>Detalles del sistema</h1>
           <p className="lead">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec bibendum magna lacus, a fermentum ipsum cursus sed. Vestibulum
+            Nuestro sistema ofrece una solución de seguridad para tí y tú motocicleta que opera sin necesidad de otro dispositivo inteligente
           </p>
         </Col>
       </Row>
@@ -68,12 +68,12 @@ const ProductDetails = () => {
         <Col md={6}>
           <h2>Modulo</h2>
           <p>
-            Donec lorem augue, elementum hendrerit felis sed, congue porttitor urna. Integer eleifend elementum ultricies. Aenean felis lacus, venenatis et imperdiet id, feugiat rutrum tellus.
+            En esta fase de prototipo nuestro modulo está construido en el menor espacio posible sin afectar a sus componentes internos
           </p>
           <ul>
-            <li>Característica 1</li>
-            <li>Característica 2</li>
-            <li>Característica 3</li>
+            <li>Dos unidades de bateria de 5000MAh</li>
+            <li>Conectividad LTE con los operadores más grandes del pais</li>
+            <li>Diseño que protege el dispositivo en caso de accidentes</li>
           </ul>
           <Button variant="primary">
             Comprar Ahora
@@ -85,9 +85,9 @@ const ProductDetails = () => {
         <Col md={12} className="text-center">
           <h2>Beneficios Clave</h2>
           <ul>
-            <li>Beneficio 1: usce imperdiet nulla semper justo aliquet, in consequat nisi accumsan.</li>
-            <li>Beneficio 2: unc gravida dui porta, gravida felis eget, molestie velit. Praesent a aliquet lacus, quis interdum orci. </li>
-            <li>Beneficio 3: Vestibulum vitae neque justo. Cras blandit sapien vel lacus maximus mattis sed et leo. </li>
+            <li>Beneficio 1: Detección automatica de accidentes.</li>
+            <li>Beneficio 2: Detección de salida de geocerco automatica. </li>
+            <li>Beneficio 3: Notifica a familiares y amigos de forma personalizada mediante SMS y/o Whatsapp. </li>
           </ul>
         </Col>
       </Row>
@@ -105,9 +105,126 @@ const ProductDetails = () => {
       </Row>
     </Container><footer className={isDarkMode ? 'footer-dark-mode' : 'footer-light'}>
         <Container>
-          <p className="footer-text">© 2024 SiNoMoto. PT2</p>
+          <p className="footer-text">© 2025 SiNoMoto. PT2</p>
         </Container>
       </footer></>
+  );
+};
+
+export default ProductDetails;
+*/
+
+
+import React, { useEffect, useState } from 'react';
+import { Container, Row, Col, Button, Navbar, Nav, Card } from 'react-bootstrap';
+
+const ProductDetails = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const updateTheme = (e) => {
+      const dark = e.matches ?? prefersDarkScheme.matches;
+      document.body.classList.toggle('dark-mode', dark);
+      setIsDarkMode(dark);
+    };
+
+    updateTheme(prefersDarkScheme);
+    prefersDarkScheme.addEventListener('change', updateTheme);
+
+    return () => prefersDarkScheme.removeEventListener('change', updateTheme);
+  }, []);
+
+  return (
+    <>
+      {/* Navbar */}
+      <Navbar
+        className={isDarkMode ? 'navbar-dark-mode' : 'navbar-light'}
+        expand="lg"
+        fixed="top"
+        variant={isDarkMode ? 'dark' : 'light'}
+        bg={isDarkMode ? 'dark' : 'light'}
+      >
+        <Container>
+          <Navbar.Brand href="/" className="fw-bold fs-4">SiNoMoto</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ms-auto">
+              <Nav.Link href="/modfis">Módulo</Nav.Link>
+              <Nav.Link href="/acercade">Nosotros</Nav.Link>
+              <Nav.Link href="/signup">Registrarse</Nav.Link>
+              <Nav.Link href="/login">Iniciar Sesión</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+
+      {/* Hero Section */}
+      <Container fluid className="mt-5 pt-5 text-center bg-dark p-5 rounded">
+        <h1 className="display-4 fw-bold">Protección Total para Tu Motocicleta</h1>
+        <p className="lead">Tecnología inteligente que actúa cuando tú no puedes</p>
+        <Button variant="primary" size="lg">Ver Detalles</Button>
+      </Container>
+
+      {/* Product Details */}
+      <Container className="mt-5">
+        <Row className="align-items-center g-5">
+          <Col md={6}>
+            <img
+              src="https://64.media.tumblr.com/bef61f8cb7f9791503727fc26cff0925/31511d3136396c71-20/s500x750/f2ac4fa1f8ff862e71336987076abc0b010a25b8.png"
+              alt="Imagen modulo"
+              className="img-fluid rounded shadow"
+            />
+          </Col>
+          <Col md={6}>
+            <h2 className="fw-bold">Nuestro Módulo</h2>
+            <p>Compacto, robusto y preparado para cualquier emergencia.</p>
+            <ul>
+              <li>2 baterías de 5000mAh</li>
+              <li>LTE con cobertura nacional</li>
+              <li>Protección anti-impacto</li>
+            </ul>
+            <Button variant="success" size="md">Comprar Ahora</Button>
+          </Col>
+        </Row>
+
+        {/* Benefits */}
+        <Row className="mt-5 text-center">
+          <h2 className="fw-bold mb-4">Beneficios Clave</h2>
+          {['Detección de accidentes', 'Salida de geocerco', 'Notificaciones automáticas a contactos'].map((b, i) => (
+            <Col md={4} key={i}>
+              <Card className="shadow-sm mb-4">
+                <Card.Body>
+                  <Card.Title>{`Beneficio ${i + 1}`}</Card.Title>
+                  <Card.Text>{b}</Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+
+        {/* Testimonials */}
+        <Row className="mt-5">
+          <Col md={12} className="text-center">
+            <h2 className="fw-bold">Opiniones de Clientes</h2>
+            <blockquote className="blockquote">
+              <p>"Este sistema me dio tranquilidad al instante." - Mamberroi</p>
+            </blockquote>
+            <blockquote className="blockquote">
+              <p>"Fácil de instalar y confiable, ¡una joya tecnológica!" - Danny Flow</p>
+            </blockquote>
+          </Col>
+        </Row>
+      </Container>
+
+      {/* Footer */}
+      <footer className={isDarkMode ? 'footer-dark-mode' : 'footer-light'}>
+        <Container className="text-center py-4">
+          <p className="footer-text mb-0">© 2025 SiNoMoto. PT2. Todos los derechos reservados.</p>
+        </Container>
+      </footer>
+    </>
   );
 };
 

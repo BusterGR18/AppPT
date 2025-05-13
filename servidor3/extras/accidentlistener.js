@@ -349,7 +349,10 @@ client.on('message', async (topic, message) => {
     console.log('Accident saved successfully:', newAccident);
 
     // TODO: Call the notification API here if needed
-    await axios.post(`http://localhost:4000/api/notifications/${newAccident._id}`);
+    //Docker
+    await axios.post(`http://backend:4000/api/notifications/${newAccident._id}`);
+    //Dev
+    //await axios.post(`http://localhost:4000/api/notifications/${newAccident._id}`);
     console.log('Notification API triggered for accident:', newAccident._id);
 
   } catch (error) {

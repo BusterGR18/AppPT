@@ -53,7 +53,7 @@ const AcercaDe = () => {
         <Col md={8} className="text-center">
           <h1>Acerca de Nosotros</h1>
           <p className="lead">
-            Bienvenido a SiNoMoto, donde la seguridad en la carretera es nuestra principal prioridad.
+            Bienvenido a SiNoMoto, donde hemos invertido nuestro esfuerzo en el desarrollo de este Proyecto Terminal.
           </p>
           <p>
             En SiNoMoto, nos dedicamos a proporcionar soluciones innovadoras para mejorar la seguridad de los motociclistas. Nuestra misión es reducir los accidentes de motocicletas y sus consecuencias mediante el uso de tecnología avanzada.

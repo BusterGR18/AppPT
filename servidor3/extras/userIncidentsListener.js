@@ -238,7 +238,10 @@ client.on('message', async (topic, message) => {
 
     // Trigger notification
     const notificationMessage = `Alert: ${incidentType} reported on board ${boardId}. Details: ${details}`;
-    await axios.post(`http://localhost:4000/api/notifications/incidents/${newIncident._id}`, {
+    //DEV
+    //await axios.post(`http://localhost:4000/api/notifications/incidents/${newIncident._id}`, {
+    //Docker
+    await axios.post(`http://backend:4000/api/notifications/incidents/${newIncident._id}`, {
       message: notificationMessage,
     });
 
