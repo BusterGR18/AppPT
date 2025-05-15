@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  frontend:
+    platform: linux/amd64
+    build:
+      context: ./cliente
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./cliente:/app
+      - /app/node_modules  # Avoid mounting host node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    command: yarn start
+    depends_on:
+      - backend
+
+  backend:
+    platform: linux/amd64
+    build:
+      context: ./servidor3
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./servidor3:/app
+      - /app/node_modules
+    ports:
+      - "4000:4000"
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017/Proyecto_Terminal
+    command: npm start
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - dbdevvolume:/data/db
+
+volumes:
+  dbdevvolume:

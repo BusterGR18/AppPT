@@ -38,10 +38,56 @@
 # volumes:
 #   mongo-data:
 
+# version: '3.8'
+
+# services:
+#   frontend:
+#     build:
+#       context: ./cliente
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8080:80"
+#     depends_on:
+#       - backend
+
+#   backend:
+#     build:
+#       context: ./servidor3
+#       dockerfile: Dockerfile
+#     ports:
+#       - "4000:4000"
+#     depends_on:
+#       - mongo
+#     environment:
+#       - MONGODB_URL=mongodb://mongo:27017/Proyecto_Terminal
+
+#   # mqttapp:
+#   #   build:
+#   #     context: ./Capture
+#   #     dockerfile: Dockerfile
+#   #   depends_on:
+#   #     - mongo
+#   #   environment:    
+#   #     - MONGO_URL=mongodb://mongo:27017/mydatabase
+
+#   mongo:
+#     image: mongo:latest  # Use the official MongoDB image for consistency
+#     container_name: mongodb
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - dbdatavolume:/data/db      
+#     command: mongod --noauth  # Disable authentication
+
+# volumes:
+#   dbdatavolume:
+#     external: true 
+
 version: '3.8'
 
 services:
   frontend:
+    platform: linux/amd64
     build:
       context: ./cliente
       dockerfile: Dockerfile
@@ -51,6 +97,7 @@ services:
       - backend
 
   backend:
+    platform: linux/amd64
     build:
       context: ./servidor3
       dockerfile: Dockerfile
@@ -61,24 +108,16 @@ services:
     environment:
       - MONGODB_URL=mongodb://mongo:27017/Proyecto_Terminal
 
-  # mqttapp:
-  #   build:
-  #     context: ./Capture
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - mongo
-  #   environment:    
-  #     - MONGO_URL=mongodb://mongo:27017/mydatabase
-
   mongo:
-    image: mongo:latest  # Use the official MongoDB image for consistency
+    platform: linux/amd64
+    image: mongo:latest
     container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
       - dbdatavolume:/data/db      
-    command: mongod --noauth  # Disable authentication
+    command: mongod --noauth
 
 volumes:
   dbdatavolume:
-    external: true 
+    external: true

@@ -3,3 +3,4 @@ servidor3/.env
 servidor3/services/notificationService.js
 basedd/dump.archive
 cliente/.env.production
+.DS_Store
