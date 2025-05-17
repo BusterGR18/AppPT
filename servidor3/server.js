@@ -101,6 +101,10 @@ app.use(checkNotifications);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/notifications/user', userIncidentRoutes);
 
+//Pass reset
+const passwordResetRoutes = require('./routes/passwordReset');
+app.use('/api/password', passwordResetRoutes);
+
 
 //admin related apis
 app.use('/api/admin', adminRoutes);

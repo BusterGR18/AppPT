@@ -29,6 +29,8 @@ import NotFound from './paginas/Notf.js';
 import MaintenanceBanner from './paginas/MaintenanceBanner.js'
 //import NavbarPrincipal from './paginas/Notf.js'
 import GeoTypeBoardConfig from './paginas/tablero/GeoTypeBoardConfig.js'
+import ForgotPasswordPage from './paginas/paginasusuario/triggerpassword.js'
+import ResetPasswordPage from './paginas/paginasusuario/passfor.js'
 
 const App = () => {
   return <div className="App">            
@@ -39,7 +41,7 @@ const App = () => {
           <Route path="/signup" exact component={Signup} />          
           <Route path="/" exact component={Inicio} />
           <Route path="/inicio" exact component={Inicio} />      
-          <Route path="/rescont" exact component={Respass} />
+          <Route path="/rescont" exact component={ForgotPasswordPage} />
           <Route path="/acercade" exact component={AcercaDe} /> 
           <Route path="/modfis" exact component={ModFis} />  
           <Route path="/dash" exact component={Dashboard} />      
@@ -56,6 +58,7 @@ const App = () => {
           <Route path="/accidentes-invitados" exact component={AccidentesInvitados}/>
           <Route path="/modulos" exact component={AdminModulos}/>
           <Route path="/geojsonmodulos" exact component={GeoTypeBoardConfig}/>
+          <Route path="/reset-password" exact component={ResetPasswordPage} />
           <ProtectedRoute path="/admindash" exact component={AdminDash} />
           <ProtectedRoute path="/adminusers" exact component={AdminUsers} />
           <ProtectedRoute path="/adminsettings" exact component={AdminSettings} />

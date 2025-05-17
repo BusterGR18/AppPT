@@ -1,92 +1,86 @@
-import React, { useState } from 'react';
-import { Form, InputGroup, Button, Container, Row, Col, Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 
-function PasswordResetPage() {
-  const [email, setEmail] = useState('');
+function ResetPasswordPage() {
+  const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
-  const resetPassword = async (event) => {
-    event.preventDefault();
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get('token');
+    if (t) setToken(t);
+    else setError('Token no válido o ausente.');
+  }, []);
 
-    // Include your password reset logic here
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+    if (newPassword !== confirmPassword) {
+      setError('Las contraseñas no coinciden.');
+      return;
+    }
 
-  const handleCancel = () => {
-    // Add logic to handle cancellation
+    try {
+      const res = await fetch('http://localhost:4000/api/password/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, newPassword })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Error al restablecer la contraseña');
+
+      setSuccess(true);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
     <Container className="mt-5">
       <Row className="justify-content-center">
         <Col md={6}>
-          <h1 className="text-center">Restablecer Contraseña</h1>
-          <Form onSubmit={resetPassword}>
-            <Form.Group className="mb-3">
-              <Form.Label>Correo Electrónico</Form.Label>
-              <Form.Control
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                placeholder="Ingrese su correo electrónico"
-              />
-            </Form.Group>
+          <h2 className="text-center mb-4">Restablecer Contraseña</h2>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Nueva Contraseña</Form.Label>
-              <InputGroup>
+          {success ? (
+            <Alert variant="success">Tu contraseña ha sido restablecida con éxito.</Alert>
+          ) : (
+            <Form onSubmit={handleSubmit}>
+              {error && <Alert variant="danger">{error}</Alert>}
+
+              <Form.Group className="mb-3">
+                <Form.Label>Nueva Contraseña</Form.Label>
                 <Form.Control
+                  type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Nueva contraseña"
+                  required
                 />
-                <Button
-                  variant="outline-secondary"
-                  onClick={togglePasswordVisibility}
-                >
-                  {showPassword ? 'Ocultar' : 'Mostrar'}
-                </Button>
-              </InputGroup>
-            </Form.Group>
+              </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Confirmar Contraseña</Form.Label>
-              <Form.Control
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                type="password"
-                placeholder="Confirme la nueva contraseña"
-              />
-            </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Confirmar Contraseña</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-            <Button variant="primary" size="lg" type="submit" className="w-100">
-              Restablecer Contraseña
-            </Button>
-
-            <Button variant="secondary" size="lg" className="w-100 mt-3" onClick={handleCancel}>
-              Cancelar
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-      <Row className="mt-3">
-        <Col className="text-center">
-          <Nav>
-            <Nav.Link as={Link} to="/login">
-              Volver a Iniciar Sesión
-            </Nav.Link>
-          </Nav>
+              <Button type="submit" className="w-100">
+                Restablecer Contraseña
+              </Button>
+            </Form>
+          )}
         </Col>
       </Row>
     </Container>
   );
 }
 
-export default PasswordResetPage;
+export default ResetPasswordPage;

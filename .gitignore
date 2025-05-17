@@ -4,3 +4,5 @@ servidor3/services/notificationService.js
 basedd/dump.archive
 cliente/.env.production
 .DS_Store
+Mailsender/.env
+Mailsender/__pycache__/main.cpython-312.pyc

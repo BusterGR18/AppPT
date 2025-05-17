@@ -1,0 +1,4 @@
+flask
+mailjet-rest
+gunicorn
+python-dotenv

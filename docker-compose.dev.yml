@@ -33,6 +33,17 @@ services:
     depends_on:
       - mongo
 
+  mailer:
+    platform: linux/amd64
+    build:
+      context: ./Mailsender
+      dockerfile: Dockerfile
+    volumes:
+      - ./Mailsender:/app
+      - ./Mailsender/.env:/app/.env:ro
+    ports:
+      - "6000:6000"
+
   mongo:
     image: mongo:latest
     container_name: mongodb

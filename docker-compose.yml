@@ -83,6 +83,46 @@
 #   dbdatavolume:
 #     external: true 
 
+# version: '3.8'
+
+# services:
+#   frontend:
+#     platform: linux/amd64
+#     build:
+#       context: ./cliente
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8080:80"
+#     depends_on:
+#       - backend
+
+#   backend:
+#     platform: linux/amd64
+#     build:
+#       context: ./servidor3
+#       dockerfile: Dockerfile
+#     ports:
+#       - "4000:4000"
+#     depends_on:
+#       - mongo
+#     environment:
+#       - MONGODB_URL=mongodb://mongo:27017/Proyecto_Terminal
+
+#   mongo:
+#     platform: linux/amd64
+#     image: mongo:latest
+#     container_name: mongodb
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - dbdatavolume:/data/db      
+#     command: mongod --noauth
+
+# volumes:
+#   dbdatavolume:
+#     external: true
+
+
 version: '3.8'
 
 services:
@@ -108,6 +148,16 @@ services:
     environment:
       - MONGODB_URL=mongodb://mongo:27017/Proyecto_Terminal
 
+  mailer:
+      platform: linux/amd64
+      build:
+        context: ./Mailsender
+        dockerfile: Dockerfile
+      volumes:
+        - ./Mailsender:/app
+        - ./Mailsender/.env:/app/.env:ro
+      ports:
+        - "6000:6000"
   mongo:
     platform: linux/amd64
     image: mongo:latest
