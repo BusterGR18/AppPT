@@ -122,12 +122,12 @@
 #   dbdatavolume:
 #     external: true
 
-
 version: '3.8'
 
 services:
   frontend:
     platform: linux/amd64
+    image: codigo-frontend:latest  # <-- Added image name
     build:
       context: ./cliente
       dockerfile: Dockerfile
@@ -138,6 +138,7 @@ services:
 
   backend:
     platform: linux/amd64
+    image: codigo-backend:latest  # <-- Added image name
     build:
       context: ./servidor3
       dockerfile: Dockerfile
@@ -149,15 +150,17 @@ services:
       - MONGODB_URL=mongodb://mongo:27017/Proyecto_Terminal
 
   mailer:
-      platform: linux/amd64
-      build:
-        context: ./Mailsender
-        dockerfile: Dockerfile
-      volumes:
-        - ./Mailsender:/app
-        - ./Mailsender/.env:/app/.env:ro
-      ports:
-        - "6000:6000"
+    platform: linux/amd64
+    image: codigo-mailer:latest  # <-- Added image name
+    build:
+      context: ./Mailsender
+      dockerfile: Dockerfile
+    volumes:
+      - ./Mailsender:/app
+      - ./Mailsender/.env:/app/.env:ro
+    ports:
+      - "6000:6000"
+
   mongo:
     platform: linux/amd64
     image: mongo:latest

@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["sh", "-c", "set -a && . /app/.env && exec gunicorn --bind 0.0.0.0:6000 main:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:6000", "main:app"]
